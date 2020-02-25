@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".LoginActivity">
+
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="0dp"
+        android:layout_height="350dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/header_login" />
+
+    <EditText
+        android:id="@+id/emailEtLogin"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:drawableLeft="@drawable/icono_email"
+        android:drawablePadding="20dp"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="15dp"
+        android:textColor="#707070"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#707070"
+        android:textColorLink="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.107" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/contrasenaEtLoginContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="100dp"
+        android:orientation="vertical"
+        android:soundEffectsEnabled="true"
+        android:splitMotionEvents="true"
+        android:textColor="#E0E0E0"
+        android:textColorHint="#E0E0E0"
+        android:textColorLink="#FFFFFF"
+        app:hintAnimationEnabled="false"
+        app:hintEnabled="false"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailEtLogin"
+        app:layout_constraintVertical_bias="0.175"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="#707070"
+        app:passwordToggleTintMode="src_in">
+
+        <EditText
+            android:id="@+id/contrasenaEtLogin"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:drawableStart="@drawable/icono_candado"
+            android:drawableLeft="@drawable/icono_candado"
+            android:drawablePadding="20dp"
+            android:ems="10"
+            android:hint="@string/contrasena"
+            android:inputType="textPassword"
+            android:paddingLeft="15dp"
+            android:textColor="#707070"
+            android:textColorHighlight="#000000"
+            android:textColorHint="#707070"
+            android:textColorLink="#FFFFFF"
+            android:textCursorDrawable="@color/colorWhite" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/entrarBtnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/boton_azul_claro"
+        android:hapticFeedbackEnabled="false"
+        android:onClick="clickEntrar"
+        android:text="@string/entrar"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contrasenaEtLoginContainer"
+        app:layout_constraintVertical_bias="0.252" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="302dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="20dp"
+        android:onClick="clickRegistrarse"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/entrarBtnLogin"
+        app:srcCompat="@drawable/registrarse" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

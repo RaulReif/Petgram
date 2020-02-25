@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Registro2Activity">
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imagenIvRegistro2"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@mipmap/ic_launcher_foreground"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewRegistro2"
+        app:layout_constraintVertical_bias="0.007" />
+
+    <Button
+        android:id="@+id/cambiarBtnRegistro2"
+        android:layout_width="72dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="96dp"
+        android:background="@drawable/boton_azul_claro"
+        android:onClick="clickCambiar"
+        android:text="@string/cambiar"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imagenIvRegistro2" />
+
+    <EditText
+        android:id="@+id/nombreEtRegistro2"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="20dp"
+        android:drawableLeft="@drawable/ic_persona"
+        android:drawablePadding="20dp"
+        android:ems="10"
+        android:gravity="left"
+        android:hint="@string/nombre_usuario"
+        android:inputType="textPersonName"
+        android:textColor="#707070"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#707070"
+        android:textColorLink="#707070"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cambiarBtnRegistro2" />
+
+    <EditText
+        android:id="@+id/localidadEtRegistro2"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="20dp"
+        android:drawableLeft="@drawable/ic_location"
+        android:drawablePadding="20dp"
+        android:ems="10"
+        android:gravity="left"
+        android:hint="@string/localidad"
+        android:inputType="textPersonName"
+        android:textColor="#707070"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#707070"
+        android:textColorLink="#707070"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tipoAnimalEtRegistro2" />
+
+    <EditText
+        android:id="@+id/tipoAnimalEtRegistro2"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="20dp"
+        android:drawableLeft="@drawable/ic_pet"
+        android:drawablePadding="20dp"
+        android:ems="10"
+        android:gravity="left"
+        android:hint="@string/tipo_de_animal"
+        android:inputType="textPersonName"
+        android:textColor="#707070"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#707070"
+        android:textColorLink="#707070"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/estadoEtRegistro2" />
+
+    <EditText
+        android:id="@+id/estadoEtRegistro2"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="20dp"
+        android:ems="10"
+        android:gravity="left"
+        android:hint="@string/estado_o_biografia"
+        android:inputType="textMultiLine"
+        android:padding="10dp"
+        android:textColor="#707070"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#707070"
+        android:textColorLink="#707070"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nombreEtRegistro2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/guardarBtnRegistro2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/boton_azul_claro"
+        android:onClick="clickGuardar"
+        android:text="@string/guardar"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/localidadEtRegistro2"
+        app:layout_constraintVertical_bias="0.368" />
+
+    <ImageView
+        android:id="@+id/imageViewRegistro2"
+        android:layout_width="0dp"
+        android:layout_height="170dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/header_registro2" />
+
+    <ImageView
+        android:id="@+id/atrasIvRegistro2"
+        android:layout_width="102dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="28dp"
+        android:onClick="clickAtras"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/atras" />
+
+    <ProgressBar
+        android:id="@+id/progressBarRegistro2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
