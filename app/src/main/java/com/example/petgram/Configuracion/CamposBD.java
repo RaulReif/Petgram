@@ -8,4 +8,7 @@ public class CamposBD {
     public static final String NOMBRE = "nombre";
     public static final String TIPO = "tipo";
     public static final String UID = "uid";
+    public static final String VISTO = "visto";
+    public static final String CONEXION = "conexion";
+    public static final String CONVERSACIONES = "conversaciones";
 }

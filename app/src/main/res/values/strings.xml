@@ -18,6 +18,43 @@
     <string name="guardar">Guardar</string>
     <string name="editar_perfil">Editar perfil</string>
     <string name="enviar_solicitud_amistad">Enviar solicitud de amistad</string>
+    <string name="configuracion">Configuración</string>
+    <string name="cambiar_contrasena">Cambiar contraseña</string>
+    <string name="contrasena_actual">Contraseña actual</string>
+    <string name="nueva_contrasnea">Nueva contraseña</string>
+    <string name="repetir_nueva_contrasena">Repetir nueva contraseña</string>
+    <string name="cambiar_email">Cambiar email</string>
+    <string name="nuevo_email">Nuevo email</string>
+    <string name="escribe_tu_mensaje">Escribe tu mensaje aquí...</string>
+
+    <!-- Tipos de animales para un Spinner -->
+    <string-array name="tipos_animales">
+        <item>Escoge un tipo de mascota</item>
+        <item>Agaporni</item>
+        <item>Caballo</item>
+        <item>Canario</item>
+        <item>Cobaya</item>
+        <item>Conejo</item>
+        <item>Cotorra</item>
+        <item>Erizo</item>
+        <item>Gato</item>
+        <item>Guacamayo</item>
+        <item>Hurón</item>
+        <item>Hámster</item>
+        <item>Invertebrado</item>
+        <item>Loro</item>
+        <item>Pato</item>
+        <item>Periquito</item>
+        <item>Perro</item>
+        <item>Pez</item>
+        <item>Pájaro</item>
+        <item>Rana</item>
+        <item>Ratón doméstico</item>
+        <item>Sapo</item>
+        <item>Serpiente</item>
+        <item>Tortuga</item>
+        <item>Otro</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

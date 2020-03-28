@@ -21,12 +21,12 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.FilaUsuarioHolder>{
+public class UsuariosAdapter extends RecyclerView.Adapter<UsuariosAdapter.FilaUsuarioHolder>{
 
     private Context context;
     private ArrayList<Usuario> lista;
 
-    public UsuarioAdapter(Context context, ArrayList<Usuario> lista) {
+    public UsuariosAdapter(Context context, ArrayList<Usuario> lista) {
         this.context = context;
         this.lista = lista;
     }
@@ -52,6 +52,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.FilaUsua
             Picasso.get().load(imagen).into(holder.ivImagen);
         }catch (Exception e){}
 
+        // Redirigimos a UsuarioActivity pasandole el UID correspondiente
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

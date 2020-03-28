@@ -21,8 +21,11 @@ public class LoginActivity extends AppCompatActivity {
 
     // Views
     private EditText etEmail, etContrasena;
-    private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+
+    //Firebase
+    private FirebaseAuth firebaseAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

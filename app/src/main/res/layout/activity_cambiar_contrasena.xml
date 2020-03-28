@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".CambiarContrasenaActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/cambiarContrasenaToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|top"
+        android:orientation="vertical"
+        android:padding="40dp">
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginBottom="60dp"
+            app:srcCompat="@drawable/ic_padlock" />
+
+        <EditText
+            android:id="@+id/contrasenaActualEtCambiarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/contrasena_actual"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/nuevaContrasenaEtCambiarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/nueva_contrasnea"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/repetirContrasenaEtCambiarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:ems="10"
+            android:hint="@string/repetir_contrasena"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:background="@drawable/boton_azul_claro"
+            android:onClick="clickCambiar"
+            android:text="@string/cambiar_contrasena"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+</LinearLayout>

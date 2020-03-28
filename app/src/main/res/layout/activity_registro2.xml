@@ -34,7 +34,7 @@
 
     <Button
         android:id="@+id/cambiarBtnRegistro2"
-        android:layout_width="72dp"
+        android:layout_width="85dp"
         android:layout_height="23dp"
         android:layout_marginTop="96dp"
         android:background="@drawable/boton_azul_claro"
@@ -89,29 +89,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tipoAnimalEtRegistro2" />
-
-    <EditText
-        android:id="@+id/tipoAnimalEtRegistro2"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="20dp"
-        android:drawableLeft="@drawable/ic_pet"
-        android:drawablePadding="20dp"
-        android:ems="10"
-        android:gravity="left"
-        android:hint="@string/tipo_de_animal"
-        android:inputType="textPersonName"
-        android:textColor="#707070"
-        android:textColorHighlight="#000000"
-        android:textColorHint="#707070"
-        android:textColorLink="#707070"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/estadoEtRegistro2" />
 
     <EditText
@@ -142,6 +119,7 @@
         android:id="@+id/guardarBtnRegistro2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:background="@drawable/boton_azul_claro"
         android:onClick="clickGuardar"
         android:text="@string/guardar"
@@ -149,8 +127,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/localidadEtRegistro2"
-        app:layout_constraintVertical_bias="0.368" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.174" />
 
     <ImageView
         android:id="@+id/imageViewRegistro2"
@@ -185,5 +163,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="5dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/localidadEtRegistro2">
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/ic_pet"
+            tools:srcCompat="@drawable/ic_pet" />
+
+        <Spinner
+            android:id="@+id/tipoAnimalpinnerRegistro2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="100"
+            android:entries="@array/tipos_animales" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

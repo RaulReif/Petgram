@@ -7,13 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.CamposBD;
@@ -59,7 +57,8 @@ public class Registro2Activity extends AppCompatActivity {
     private ImageView imgPrincipal, imgAtras;
     private Button btnCambiar, btnGuardar;
     private ImageView ivAtras;
-    private EditText etTipoAnimal, etLocalidad, etNombre, etEstado;
+    private EditText etLocalidad, etNombre, etEstado;
+    private Spinner spTipoAnimal;
     private ProgressBar progressBar;
 
     // URI de la foto de perfil
@@ -78,7 +77,7 @@ public class Registro2Activity extends AppCompatActivity {
         //Asociación de las vistas
         imagen = findViewById(R.id.imagenIvRegistro2);
         ivAtras = findViewById(R.id.atrasIvRegistro2);
-        etTipoAnimal = findViewById(R.id.tipoAnimalEtRegistro2);
+        spTipoAnimal = findViewById(R.id.tipoAnimalpinnerRegistro2);
         etLocalidad = findViewById(R.id.localidadEtRegistro2);
         etNombre = findViewById(R.id.nombreEtRegistro2);
         etEstado = findViewById(R.id.estadoEtRegistro2);
@@ -208,74 +207,99 @@ public class Registro2Activity extends AppCompatActivity {
     public void clickGuardar(View view) {
 
         // Recogemos los valores
-        final String tipo = etTipoAnimal.getText().toString();
-        final String localidad = etLocalidad.getText().toString();
-        final String nombre = etNombre.getText().toString();
-        final String estado = etEstado.getText().toString();
+        final String tipo = (String) spTipoAnimal.getSelectedItem();
+        final String localidad = etLocalidad.getText().toString().trim();
+        final String nombre = etNombre.getText().toString().trim();
+        final String estado = etEstado.getText().toString().trim();
 
-        //
+        // Comprobamos que haya un tipo de animal seleccionado
+        if (!tipo.equals("Escoge un tipo de mascota")) {
 
-        if (!tipo.isEmpty() && !localidad.isEmpty() && !nombre.isEmpty() && !estado.isEmpty()) {
+            // Comprobamos que los campos de texto no esten vacíos
+            if (!localidad.isEmpty() && !nombre.isEmpty() && !estado.isEmpty()) {
 
-            // Ejecutamos un ProgressDialog
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Actualizando perfil");
-            pd.show();
+                // Comprobamos que nombre del usuario tenga el formato deseado
+                if (comprobarNombreUsuario(nombre)) {
 
-            // Almacenamos en un HashMap todos los datos excepto la foto de perfil
+                    // Ejecutamos un ProgressDialog
+                    final ProgressDialog pd = new ProgressDialog(this);
+                    pd.setMessage("Actualizando perfil");
+                    pd.show();
 
-            final HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put(CamposBD.NOMBRE, nombre);
-            hashMap.put(CamposBD.ESTADO, estado);
-            hashMap.put(CamposBD.TIPO, tipo);
-            hashMap.put(CamposBD.LOCALIDAD, localidad);
+                    // Almacenamos en un HashMap todos los datos excepto la foto de perfil
+
+                    final HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put(CamposBD.NOMBRE, nombre);
+                    hashMap.put(CamposBD.ESTADO, estado);
+                    hashMap.put(CamposBD.TIPO, tipo);
+                    hashMap.put(CamposBD.LOCALIDAD, localidad);
 
 
-            // Obtenemos la referencia de donde queremos almacenar la foto de perfil
-            StorageReference storageReference = FirebaseStorage.getInstance().
-                    getReference("fotos_perfil/" + FirebaseAuth.getInstance().getCurrentUser()
-                            .getUid());
+                    // Obtenemos la referencia de donde queremos almacenar la foto de perfil
+                    StorageReference storageReference = FirebaseStorage.getInstance().
+                            getReference("fotos_perfil/" + FirebaseAuth.getInstance().getCurrentUser()
+                                    .getUid());
 
-            // Guardamos la foto dentro de nuestra referencia si se ha escogido una
-            if(fotoUri != null) {
-                storageReference.putFile(fotoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful()) ;
-                        Uri downloadUri = uriTask.getResult();
+                    // Guardamos la foto dentro de nuestra referencia si se ha escogido una
+                    if (fotoUri != null) {
+                        storageReference.putFile(fotoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!uriTask.isSuccessful()) ;
+                                Uri downloadUri = uriTask.getResult();
 
-                        hashMap.put(CamposBD.IMAGEN, downloadUri.toString());
+                                // Añadimos al HashMap la url donde se ha guardado la imagen
+                                hashMap.put(CamposBD.IMAGEN, downloadUri.toString());
 
+                                // Actualizamos los datos de nuestra referencia
+                                reference.updateChildren(hashMap);
+
+                                pd.dismiss();
+
+                                //Redirigimos
+                                redirigir();
+
+                            }
+                        });
+                    } else {
                         // Actualizamos los datos de nuestra referencia
                         reference.updateChildren(hashMap);
-
                         pd.dismiss();
-
                         redirigir();
-
                     }
-                });
-            }
-            else {
-                // Actualizamos los datos de nuestra referencia
-                reference.updateChildren(hashMap);
-                pd.dismiss();
-                redirigir();
-            }
 
+                } else {
+                    etNombre.setError("Solo se permite utilizar minúsculas, números y barra baja en " +
+                            "el nombre de usuario");
+                }
 
-        } else
-            Toast.makeText(this, "Es necesario rellenear todos los campos", Toast.LENGTH_SHORT).show();
+            } else
+                Toast.makeText(this, "Es necesario rellenear todos los campos", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(this, "Selecciona un tipo de animal", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean comprobarNombreUsuario(String nombre) {
+        /* Iteramos los caracteres del nombre de usuario y si alguno no esta dentro del rango de
+         *  los números correspondientes a las minsculas o la barra baja dentro del código ASCII
+         *  devolvemo false. Si se completa la iteración se devolvera true*/
+        for (int i = 0; i < nombre.length(); i++)
+            if ((nombre.charAt(i) < 97 || nombre.charAt(i) > 122)
+                    && (nombre.charAt(i) < 48 || nombre.charAt(i) > 57)
+                    && nombre.charAt(i) != 95)
+                return false;
+        return true;
     }
 
     @Override
     public void onBackPressed() {
         // No permitiremos ir hacia atras al usuario si venimos de registro
-        if (registro){
+        if (registro) {
             Toast.makeText(this, "Debes guardar todos los datos de perfil", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             finish();
         }
     }
@@ -287,14 +311,27 @@ public class Registro2Activity extends AppCompatActivity {
                 GenericTypeIndicator<HashMap<String, String>> genericTypeIndicator =
                         new GenericTypeIndicator<HashMap<String, String>>() {
                         };
+
+                // Obtenemos los datos
                 HashMap<String, String> hashMap = dataSnapshot.getValue(genericTypeIndicator);
+
+                // Asociamos los datos
                 etNombre.setText(hashMap.get("nombre"));
                 etEstado.setText(hashMap.get("estado"));
-                etTipoAnimal.setText(hashMap.get("tipo"));
                 etLocalidad.setText(hashMap.get("localidad"));
                 try {
                     Picasso.get().load(hashMap.get("imagen")).into(imagen);
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
+
+                /* Recorremos el spinner para saber en que posición se encuentra el tipo de animal
+                 *  que hemos obtenido de la base de datos y cambiarle la selección es ese valor */
+                int indice = 0;
+                for (int i = 0; i < spTipoAnimal.getCount(); i++) {
+                    if (spTipoAnimal.getItemAtPosition(i).equals(hashMap.get("tipo")))
+                        indice = i;
+                }
+                spTipoAnimal.setSelection(indice);
             }
 
             @Override
@@ -308,7 +345,7 @@ public class Registro2Activity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         imagen.setVisibility(View.VISIBLE);
         ivAtras.setVisibility(View.VISIBLE);
-        etTipoAnimal.setVisibility(View.VISIBLE);
+        spTipoAnimal.setVisibility(View.VISIBLE);
         etLocalidad.setVisibility(View.VISIBLE);
         etNombre.setVisibility(View.VISIBLE);
         etEstado.setVisibility(View.VISIBLE);
@@ -322,7 +359,7 @@ public class Registro2Activity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         imagen.setVisibility(View.INVISIBLE);
         ivAtras.setVisibility(View.INVISIBLE);
-        etTipoAnimal.setVisibility(View.INVISIBLE);
+        spTipoAnimal.setVisibility(View.INVISIBLE);
         etLocalidad.setVisibility(View.INVISIBLE);
         etNombre.setVisibility(View.INVISIBLE);
         etEstado.setVisibility(View.INVISIBLE);
@@ -332,13 +369,12 @@ public class Registro2Activity extends AppCompatActivity {
         btnGuardar.setVisibility(View.INVISIBLE);
     }
 
-    private void redirigir(){
+    private void redirigir() {
         // Refirigiremos a sitios deferentes dependiendo si venimos de registro o no
         if (registro) {
             startActivity(new Intent(Registro2Activity.this, TableroActivity.class));
             finish();
-        }
-        else
+        } else
             finish();
     }
 

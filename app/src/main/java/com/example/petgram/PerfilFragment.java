@@ -15,7 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.example.petgram.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,7 +47,7 @@ public class PerfilFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_perfil, container, false);
+        final View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
         // Asociación de las vistas
         final TextView tvNombre = view.findViewById(R.id.nombreTvPerfil);
@@ -108,11 +111,20 @@ public class PerfilFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.cerrarSesionMenuItem:
+            case R.id.cerrarSesionMenuItem: {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getContext(), LoginActivity.class));
                 getActivity().finish();
                 break;
+            }
+            case R.id.cambiarEmailMenuItem: {
+                startActivity(new Intent(getContext(), CambiarEmailActivity.class));
+                break;
+            }
+                case R.id.cambiarContrasenaMenuItem: {
+                    startActivity(new Intent(getContext(), CambiarContrasenaActivity.class));
+                break;
+            }
         }
         return true;
     }

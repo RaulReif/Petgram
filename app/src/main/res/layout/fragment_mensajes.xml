@@ -6,11 +6,10 @@
     tools:context=".MensajesFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/conversacionesRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Mensajes"
-        android:textSize="36sp" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

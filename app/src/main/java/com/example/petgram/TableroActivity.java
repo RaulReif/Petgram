@@ -10,9 +10,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.petgram.models.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class TableroActivity extends AppCompatActivity {
 
@@ -65,7 +72,7 @@ public class TableroActivity extends AppCompatActivity {
                         break;
 
                     case R.id.perfilNavItem:
-                        toolbar.setTitle("Tu perfil");
+                        toolbar.setTitle(obtenerNombreUsuario());
                         toolbar.setVisibility(View.VISIBLE);
                         PerfilFragment perfilFragment = new PerfilFragment();
                         FragmentTransaction perfilTranscaction = getSupportFragmentManager().beginTransaction();
@@ -85,6 +92,25 @@ public class TableroActivity extends AppCompatActivity {
         publicacionesTransaction.replace(R.id.fragment, publicacionesFragment, "");
         publicacionesTransaction.commit();
 
+    }
+
+    private String obtenerNombreUsuario() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        final String[] nombre = {""};
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                nombre[0] = dataSnapshot.getValue(Usuario.class).getNombre();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return nombre[0];
     }
 
 }

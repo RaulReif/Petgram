@@ -5,11 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UsuarioActivity">
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +61,6 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
-                        android:text="Wiliam Snoe"
                         android:textColor="#fff"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -90,7 +99,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="10dp"
-                                android:text="125"
                                 android:textColor="#00A89B"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -116,7 +124,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="10dp"
-                                android:text="1205"
                                 android:textColor="#00A89B"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -141,7 +148,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="10dp"
-                                android:text="360"
                                 android:textColor="#00A89B"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -152,6 +158,14 @@
                 </androidx.cardview.widget.CardView>
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/estadoTvUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
             <Button
                 android:id="@+id/enviarSolicitudBtnUsuario"
                 android:layout_width="wrap_content"
@@ -160,19 +174,12 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/buttonstyle"
+                android:onClick="enviarSolicitudAmistad"
                 android:text="@string/enviar_solicitud_amistad"
                 android:textColor="#fff"
                 android:visibility="visible" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/estadoTvUsuario"
-            android:layout_width="match_parent"
-            android:layout_height="178dp"
-            android:layout_margin="10dp"
-            android:text="TextView"
-            android:textSize="18sp" />
 
     </LinearLayout>
 

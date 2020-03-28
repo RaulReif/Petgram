@@ -1,8 +1,11 @@
 package com.example.petgram.models;
 
+import java.util.HashMap;
+
 public class Usuario {
 
-    private String email, estado, imagen, localidad, nombre, tipo, uid;
+    private String email, estado, imagen, localidad, nombre, tipo, uid, conexion;
+    private HashMap<String, Conversacion> conversaciones;
 
     public Usuario(String email, String estado, String imagen, String localidad, String nombre,
                    String tipo, String uid) {
@@ -71,5 +74,21 @@ public class Usuario {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getConexion() {
+        return conexion;
+    }
+
+    public void setConexion(String conexion) {
+        this.conexion = conexion;
+    }
+
+    public HashMap<String, Conversacion> getConversaciones() {
+        return conversaciones;
+    }
+
+    public void setConversaciones(HashMap<String, Conversacion> conversaciones) {
+        this.conversaciones = conversaciones;
     }
 }

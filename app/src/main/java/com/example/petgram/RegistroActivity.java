@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.CamposBD;
+import com.example.petgram.models.Conversacion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -50,6 +51,14 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     public void clickCancelar(View view) {
+       startActivity(new Intent(this, LoginActivity.class));
+       finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
@@ -166,10 +175,11 @@ public class RegistroActivity extends AppCompatActivity {
                 });
     }
 
-    /* Añadimos unos datos por defecto más el correo obtenido
-    *  La necesidad de esto es asegurarnos que aunque en el siguiente Activity el usuario aunque
-    *  cierre la aplicación tenga unos datos por defecto asociados*/
+
     private void crearUsuarioFireBase() {
+        /* Añadimos unos datos por defecto más el correo obtenido
+         *  La necesidad de esto es asegurarnos que aunque en el siguiente Activity el usuario aunque
+         *  cierre la aplicación tenga unos datos por defecto asociados*/
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(CamposBD.EMAIL, etEmail.getText().toString().trim());
@@ -177,8 +187,10 @@ public class RegistroActivity extends AppCompatActivity {
         hashMap.put(CamposBD.ESTADO, "Sin estado");
         hashMap.put(CamposBD.TIPO, "No especificado");
         hashMap.put(CamposBD.LOCALIDAD, "No especificada");
-        hashMap.put(CamposBD.IMAGEN, "");
+        hashMap.put(CamposBD.IMAGEN, "https://firebasestorage.googleapis.com/v0/b/petgram-9e136.appspot.com/o/fotos_perfil%2Ficono_petgram2.JPG?alt=media&token=16d7bdc7-06d0-493f-a61c-8e40ef91caf1");
         hashMap.put(CamposBD.UID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+        hashMap.put(CamposBD.CONEXION, "Nunca se ha conectado al servicio de mensajería");
+        hashMap.put(CamposBD.CONVERSACIONES, new HashMap<String, Conversacion>());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());

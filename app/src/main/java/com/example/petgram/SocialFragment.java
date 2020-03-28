@@ -1,18 +1,15 @@
 package com.example.petgram;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,9 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
-import com.example.petgram.adapters.UsuarioAdapter;
+import com.example.petgram.adapters.UsuariosAdapter;
 import com.example.petgram.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +43,7 @@ public class SocialFragment extends Fragment {
     private DatabaseReference reference;
 
     // Adapter de usuarios
-    private UsuarioAdapter adapter;
+    private UsuariosAdapter adapter;
 
     // Vistas
     private ImageView imagen;
@@ -78,7 +74,7 @@ public class SocialFragment extends Fragment {
 
         // Creamos y asociamos el adapter al recycler
         lista = new ArrayList<>();
-        adapter = new UsuarioAdapter(getActivity(), lista);
+        adapter = new UsuariosAdapter(getActivity(), lista);
         recyclerView.setAdapter(adapter);
 
         // Creamos la referencia donde se almacenan los usuarios
@@ -99,6 +95,7 @@ public class SocialFragment extends Fragment {
         // Obtenemos el SearchView
         MenuItem menuItem = menu.findItem(R.id.buscarMenuBuscar);
         searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setQueryHint("Busca");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
