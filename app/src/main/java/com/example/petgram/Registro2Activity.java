@@ -16,22 +16,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.CamposBD;
+import com.example.petgram.Configuracion.Utils;
+import com.example.petgram.models.Usuario;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -54,43 +51,19 @@ public class Registro2Activity extends AppCompatActivity {
 
     // Views
     private CircleImageView imagen;
-    private ImageView imgPrincipal, imgAtras;
-    private Button btnCambiar, btnGuardar;
     private ImageView ivAtras;
     private EditText etLocalidad, etNombre, etEstado;
     private Spinner spTipoAnimal;
-    private ProgressBar progressBar;
 
     // URI de la foto de perfil
     private Uri fotoUri;
-
-    // FireBase
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference reference;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro2);
 
-        //Asociación de las vistas
-        imagen = findViewById(R.id.imagenIvRegistro2);
-        ivAtras = findViewById(R.id.atrasIvRegistro2);
-        spTipoAnimal = findViewById(R.id.tipoAnimalpinnerRegistro2);
-        etLocalidad = findViewById(R.id.localidadEtRegistro2);
-        etNombre = findViewById(R.id.nombreEtRegistro2);
-        etEstado = findViewById(R.id.estadoEtRegistro2);
-        imgPrincipal = findViewById(R.id.imagenIvRegistro2);
-        imgAtras = findViewById(R.id.atrasIvRegistro2);
-        btnCambiar = findViewById(R.id.cambiarBtnRegistro2);
-        btnGuardar = findViewById(R.id.guardarBtnRegistro2);
-        progressBar = findViewById(R.id.progressBarRegistro2);
-
-        // Obtenemos la referencia de los datos del usuario
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        reference = firebaseDatabase.getReference("usuarios")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        findViews();
 
         /* Comprobamos si estamos dentro de la fase de registro para cambiar la interacción del activity.
          *  Ya que este activity lo reutilizaremos para modificiar los datos del perfil.
@@ -109,6 +82,15 @@ public class Registro2Activity extends AppCompatActivity {
             rellenarCampos();
         }
 
+    }
+
+    private void findViews() {
+        imagen = findViewById(R.id.imagenIvRegistro2);
+        ivAtras = findViewById(R.id.atrasIvRegistro2);
+        spTipoAnimal = findViewById(R.id.tipoAnimalpinnerRegistro2);
+        etLocalidad = findViewById(R.id.localidadEtRegistro2);
+        etNombre = findViewById(R.id.nombreEtRegistro2);
+        etEstado = findViewById(R.id.estadoEtRegistro2);
     }
 
     public void clickAtras(View view) {
@@ -253,7 +235,7 @@ public class Registro2Activity extends AppCompatActivity {
                                 hashMap.put(CamposBD.IMAGEN, downloadUri.toString());
 
                                 // Actualizamos los datos de nuestra referencia
-                                reference.updateChildren(hashMap);
+                                Utils.getMyReference().updateChildren(hashMap);
 
                                 pd.dismiss();
 
@@ -264,7 +246,7 @@ public class Registro2Activity extends AppCompatActivity {
                         });
                     } else {
                         // Actualizamos los datos de nuestra referencia
-                        reference.updateChildren(hashMap);
+                        Utils.getMyReference().updateChildren(hashMap);
                         pd.dismiss();
                         redirigir();
                     }
@@ -305,22 +287,18 @@ public class Registro2Activity extends AppCompatActivity {
     }
 
     private void rellenarCampos() {
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<HashMap<String, String>> genericTypeIndicator =
-                        new GenericTypeIndicator<HashMap<String, String>>() {
-                        };
-
-                // Obtenemos los datos
-                HashMap<String, String> hashMap = dataSnapshot.getValue(genericTypeIndicator);
+                // Obtenemos el usuario
+                Usuario usuario = dataSnapshot.getValue(Usuario.class);
 
                 // Asociamos los datos
-                etNombre.setText(hashMap.get("nombre"));
-                etEstado.setText(hashMap.get("estado"));
-                etLocalidad.setText(hashMap.get("localidad"));
+                etNombre.setText(usuario.getNombre());
+                etEstado.setText(usuario.getEstado());
+                etLocalidad.setText(usuario.getLocalidad());
                 try {
-                    Picasso.get().load(hashMap.get("imagen")).into(imagen);
+                    Picasso.get().load(usuario.getImagen()).into(imagen);
                 } catch (Exception e) {
                 }
 
@@ -328,7 +306,7 @@ public class Registro2Activity extends AppCompatActivity {
                  *  que hemos obtenido de la base de datos y cambiarle la selección es ese valor */
                 int indice = 0;
                 for (int i = 0; i < spTipoAnimal.getCount(); i++) {
-                    if (spTipoAnimal.getItemAtPosition(i).equals(hashMap.get("tipo")))
+                    if (spTipoAnimal.getItemAtPosition(i).equals(usuario.getTipo()))
                         indice = i;
                 }
                 spTipoAnimal.setSelection(indice);
@@ -339,34 +317,6 @@ public class Registro2Activity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void mostrarVistas() {
-        progressBar.setVisibility(View.GONE);
-        imagen.setVisibility(View.VISIBLE);
-        ivAtras.setVisibility(View.VISIBLE);
-        spTipoAnimal.setVisibility(View.VISIBLE);
-        etLocalidad.setVisibility(View.VISIBLE);
-        etNombre.setVisibility(View.VISIBLE);
-        etEstado.setVisibility(View.VISIBLE);
-        imgPrincipal.setVisibility(View.VISIBLE);
-        imgAtras.setVisibility(View.VISIBLE);
-        btnCambiar.setVisibility(View.VISIBLE);
-        btnGuardar.setVisibility(View.VISIBLE);
-    }
-
-    private void esconderVistas() {
-        progressBar.setVisibility(View.VISIBLE);
-        imagen.setVisibility(View.INVISIBLE);
-        ivAtras.setVisibility(View.INVISIBLE);
-        spTipoAnimal.setVisibility(View.INVISIBLE);
-        etLocalidad.setVisibility(View.INVISIBLE);
-        etNombre.setVisibility(View.INVISIBLE);
-        etEstado.setVisibility(View.INVISIBLE);
-        imgPrincipal.setVisibility(View.INVISIBLE);
-        imgAtras.setVisibility(View.INVISIBLE);
-        btnCambiar.setVisibility(View.INVISIBLE);
-        btnGuardar.setVisibility(View.INVISIBLE);
     }
 
     private void redirigir() {

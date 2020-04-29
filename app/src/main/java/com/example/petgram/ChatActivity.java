@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.CamposBD;
+import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.adapters.ChatAdapter;
 import com.example.petgram.models.Conversacion;
 import com.example.petgram.models.Mensaje;
@@ -27,12 +28,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -45,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
     private TextView tvNombre, tvConexion;
     private EditText etMensaje;
     private RecyclerView recyclerView;
+    private volatile MenuItem miBloquear;
 
     // UIDs
     private String uidUsuario; // UID del usuario propio
@@ -63,95 +65,34 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference conversacionOtroUsuario;
     private DatabaseReference conversacionUsuario;
 
+    // Booleano que nos permite saber si el otro usuario nos tiene bloqueados;
+    private boolean bloqueado;
+
+    // El otro usuario
+    private Usuario usuario;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Asociamos y cambiamos el texto de la toolbar
-        Toolbar toolbar = findViewById(R.id.toolbarChat);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-
-        // Habilitamos el botón de atras en la toolbar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        // Asociamos las vistas
-        ivFotoPerfil = findViewById(R.id.fotoPerfilIvChat);
-        tvNombre = findViewById(R.id.nombreTvChat);
-        tvConexion = findViewById(R.id.conexionTvChat);
-        etMensaje = findViewById(R.id.mensajeEtChat);
+        this.findViews();
 
         // Obtenemos los UIDs
         uidOtroUsuario = getIntent().getExtras().getString("uid");
         uidUsuario = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Obtenemos la referencia del usuario receptor
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(uidOtroUsuario);
-
-        // Obtenemos una única vez la imagen y el nombre del usuario de la referencia
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Obtenemos el usuario receptor
-                Usuario usuario = dataSnapshot.getValue(Usuario.class);
-
-                // Asociamos los datos
-                tvNombre.setText(usuario.getNombre());
-                tvConexion.setText(usuario.getConexion());
-                Picasso.get().load(usuario.getImagen()).into(ivFotoPerfil);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        // Obtenemos en tiempo real el estado de conexion del usuario
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Obtenemos el usuario receptor
-                Usuario usuario = dataSnapshot.getValue(Usuario.class);
-
-                // Asociamos los datos
-                tvConexion.setText(usuario.getConexion());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        // Obtenemos la referencia del usuario receptor y asociamos los datos
+        this.obtenerDatos();
 
         // Obtenemos la referencia de las conversaciones en los nodos de ambos usuarios
-        this.conversacionUsuario = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(this.uidUsuario)
-                .child("conversaciones")
-                .child(this.uidOtroUsuario);
+        this.conversacionUsuario = Utils.getMyReference().child("conversaciones").child(this.uidOtroUsuario);
 
-        this.conversacionOtroUsuario = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(this.uidOtroUsuario)
-                .child("conversaciones")
+        this.conversacionOtroUsuario = Utils.getUserReference(uidOtroUsuario).child("conversaciones")
                 .child(this.uidUsuario);
 
         // Comprobamos si ya se ha iniciado una conversación con el otro usuario
         this.existeConversacion = existeConversacion();
-
-        // Leemos los mensajes
-        leerMensajes();
-
-        // Activamos el listener del leido
-        comprobarLeido();
 
         // Cambiamos el estado de conexion de nuestro usuario
         cambiarEstadoConexion("En línea");
@@ -159,7 +100,6 @@ public class ChatActivity extends AppCompatActivity {
         etMensaje.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -177,26 +117,42 @@ public class ChatActivity extends AppCompatActivity {
                     cambiarEstadoConexion("Escribiendo...");
             }
         });
+
+
     }
 
-    private boolean existeConversacion() {
-
-        this.conversacionUsuario.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                existeConversacion = dataSnapshot.hasChild("mensajes");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-        return true;
+    private void listeners() {
+        if (existeConversacion) {
+            this.leerMensajes();
+            this.comprobarLeido();
+            this.comprobarBloqueados();
+        }
     }
 
     private void comprobarLeido() {
         this.conversacionUsuario.child("mensajes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Mensaje mensaje = ds.getValue(Mensaje.class);
+                            // Comprobamos que sean los mensajes donde el otro usuario es el emisor
+                            if (mensaje.getEmisor().equals(uidOtroUsuario) && mensaje.getReceptor().equals(uidUsuario)) {
+                                // Actualizamos el estado a leído
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put(CamposBD.VISTO, "true");
+                                ds.getRef().updateChildren(hashMap);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        this.conversacionOtroUsuario.child("mensajes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -238,55 +194,171 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter(this, listaMensajes);
         recyclerView.setAdapter(chatAdapter);
 
-        this.conversacionUsuario.child("mensajes")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        listaMensajes.clear();
-                        for (DataSnapshot ds : dataSnapshot.getChildren())
-                            listaMensajes.add(ds.getValue(Mensaje.class));
+        this.conversacionUsuario.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Conversacion c = dataSnapshot.getValue(Conversacion.class);
+                listaMensajes.clear();
+                if(c.getMensajes() != null)
+                for (Mensaje mensaje : c.getMensajes().values())
+                    listaMensajes.add(mensaje);
 
-                        chatAdapter.notifyDataSetChanged();
-                        recyclerView.scrollToPosition(listaMensajes.size() - 1);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                Collections.sort(listaMensajes);
+                chatAdapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(listaMensajes.size() - 1);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
 
 
+    }
+
+    private void comprobarBloqueados() {
+        conversacionUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean bloqueado = dataSnapshot.getValue(Boolean.class);
+                if (bloqueado) {
+                    miBloquear.setTitle("Desbloquear");
+                } else {
+                    miBloquear.setTitle("Bloquear");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        conversacionOtroUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                bloqueado = dataSnapshot.getValue(Boolean.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void findViews() {
+        // Asociamos y cambiamos el texto de la toolbar
+        Toolbar toolbar = findViewById(R.id.toolbarChat);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        // Habilitamos el botón de atras en la toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        // Asociamos las vistas
+        ivFotoPerfil = findViewById(R.id.fotoPerfilIvChat);
+        tvNombre = findViewById(R.id.nombreTvChat);
+        tvConexion = findViewById(R.id.conexionTvChat);
+        etMensaje = findViewById(R.id.mensajeEtChat);
+    }
+
+    private void obtenerDatos() {
+        DatabaseReference reference = Utils.getUserReference(uidOtroUsuario);
+
+        // Obtenemos una única vez la imagen y el nombre del usuario de la referencia
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Obtenemos el usuario receptor
+                usuario = dataSnapshot.getValue(Usuario.class);
+
+                // Asociamos los datos
+                tvNombre.setText(usuario.getNombre());
+                tvConexion.setText(usuario.getConexion());
+                Picasso.get().load(usuario.getImagen()).into(ivFotoPerfil);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Obtenemos en tiempo real el estado de conexion del usuario
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Obtenemos el usuario receptor
+                Usuario usuario = dataSnapshot.getValue(Usuario.class);
+
+                // Asociamos los datos
+                tvConexion.setText(usuario.getConexion());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private boolean existeConversacion() {
+
+        this.conversacionUsuario.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                existeConversacion = dataSnapshot.hasChild("mensajes");
+                if(existeConversacion)
+                    listeners();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        return true;
     }
 
     private void cambiarEstadoConexion(String conexion) {
         // Actualizamos el estado de conexion de nuestro usuario
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put(CamposBD.CONEXION, conexion);
-        reference.updateChildren(hashMap);
+        Utils.getMyReference().updateChildren(hashMap);
     }
 
     public void enviar(View view) {
-        String mensajeString = etMensaje.getText().toString().trim();
-        if (!mensajeString.isEmpty()) {
-            // Creamos el Objeto Mensaje
-            Mensaje mensaje = new Mensaje(uidUsuario, uidOtroUsuario, mensajeString);
+        if (!bloqueado) {
+            String mensajeString = etMensaje.getText().toString().trim();
+            if (!mensajeString.isEmpty()) {
+                // Creamos el Objeto Mensaje
+                Mensaje mensaje = new Mensaje(uidUsuario, uidOtroUsuario, mensajeString);
 
-            // Comprobamos si ya existe la conversación y de no ser asi la creamos
-            if(!this.existeConversacion) {
-                this.conversacionUsuario.setValue(new Conversacion(this.uidOtroUsuario));
-                this.conversacionOtroUsuario.setValue(new Conversacion(this.uidUsuario));
-                this.existeConversacion = true;
+                // Comprobamos si ya existe la conversación y de no ser asi la creamos
+                if (!this.existeConversacion) {
+                    this.conversacionUsuario.setValue(new Conversacion(this.uidOtroUsuario));
+                    this.conversacionOtroUsuario.setValue(new Conversacion(this.uidUsuario));
+                    this.existeConversacion = true;
+                    listeners();
+                }
+
+                // Creamos las referencias donde queremos almacenar el mensaje  y lo guardamos
+                this.conversacionUsuario.child("mensajes").push().setValue(mensaje);
+                this.conversacionOtroUsuario.child("mensajes").push().setValue(mensaje);
+
+                // Cambiamos el timestamp del último mensaje de las conversaciones
+                this.conversacionUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
+                this.conversacionOtroUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
+
+                // Limpiamos el campo de texto
+                etMensaje.setText("");
             }
-
-            // Creamos las referencias donde queremos almacenar el mensaje  y lo guardamos
-            this.conversacionUsuario.child("mensajes").push().setValue(mensaje);
-            this.conversacionOtroUsuario.child("mensajes").push().setValue(mensaje);
-
-            // Limpiamos el campo de texto
-            etMensaje.setText("");
+        } else {
+            Toast.makeText(this, this.usuario.getNombre() + " te ha bloqueado", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -302,6 +374,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_chat, menu);
+        this.miBloquear = menu.findItem(R.id.bloquearMenuChat);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -310,6 +383,26 @@ public class ChatActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.denunciarMenuChat: {
                 Toast.makeText(this, "Se desea denunciar al usuario", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case R.id.bloquearMenuChat: {
+                this.conversacionUsuario.child("bloqueado")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                boolean bloqueadoAux = dataSnapshot.getValue(Boolean.class);
+                                dataSnapshot.getRef().setValue(!bloqueadoAux);
+                                if (bloqueadoAux) {
+                                    Toast.makeText(ChatActivity.this, "Has desbloqueado a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(ChatActivity.this, "Has bloqueado a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
                 break;
             }
         }

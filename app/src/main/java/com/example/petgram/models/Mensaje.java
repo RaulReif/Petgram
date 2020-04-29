@@ -1,14 +1,15 @@
 package com.example.petgram.models;
 
-public class Mensaje {
+public class Mensaje implements Comparable<Mensaje>{
 
-    private String emisor, receptor, mensaje, timestamp, visto;
+    private String emisor, receptor, mensaje, visto;
+    private long timestamp;
 
     public Mensaje(String emisor, String receptor, String mensaje) {
         this.emisor = emisor;
         this.receptor = receptor;
         this.mensaje = mensaje;
-        this.timestamp = String.valueOf(System.currentTimeMillis());
+        this.timestamp = System.currentTimeMillis();
         this.visto = "false";
     }
 
@@ -38,11 +39,11 @@ public class Mensaje {
         this.mensaje = mensaje;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -52,5 +53,13 @@ public class Mensaje {
 
     public void setVisto(String visto) {
         this.visto = visto;
+    }
+
+    @Override
+    public int compareTo(Mensaje m) {
+        if( this.timestamp < m.getTimestamp() )
+            return -1;
+        else
+            return 1;
     }
 }

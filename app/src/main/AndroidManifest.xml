@@ -13,9 +13,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChatActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name=".CambiarEmailActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".CambiarContrasenaActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ComentariosActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".AmigosActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BloqueadosActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PublicacionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CambiarEmailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CambiarContrasenaActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UsuarioActivity"
             android:screenOrientation="portrait" />

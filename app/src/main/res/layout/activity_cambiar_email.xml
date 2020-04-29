@@ -54,7 +54,11 @@
             android:background="@drawable/boton_azul_claro"
             android:onClick="clickCambiar"
             android:text="@string/cambiar_email"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            />
 
     </LinearLayout>
 

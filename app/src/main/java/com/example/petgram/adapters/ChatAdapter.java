@@ -12,13 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.R;
 import com.example.petgram.models.Mensaje;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -73,14 +73,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MensajeHolder>
 
         // Obtenemos los datos
         String mensaje = listaMensajes.get(position).getMensaje();
-        final String timestamp = listaMensajes.get(position).getTimestamp();
+        final long timestamp = listaMensajes.get(position).getTimestamp();
         String leido = listaMensajes.get(position).getVisto();
         final String emisor = listaMensajes.get(position).getEmisor();
         final String receptor = listaMensajes.get(position).getReceptor();
 
         // Pasamos el timestamp a un formato de fecha correcto
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-        calendar.setTimeInMillis(Long.parseLong(timestamp));
+        calendar.setTimeInMillis(timestamp);
         String fecha = DateFormat.format("dd/MM HH:mm", calendar).toString();
 
         // Asociamos los datos
@@ -97,75 +97,70 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MensajeHolder>
         else
             holder.leido.setVisibility(View.GONE);
 
-        // Le damos el evento para eliminar el mensaje
-        holder.mensaje.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (emisor.equals(uid)) {
+            // Le damos el evento para eliminar el mensaje
+            holder.mensaje.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                // Creamos y configuramos el AlertDialog para eliminar el mensaje
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Eliminar mensaje");
-                builder.setMessage("Estas seguro que deseas eliminar el mensaje?");
-                builder.setNegativeButton("Cancelar", null);
-                // Damos la interacción cuando el usuario confirme que quiere eliminar el mensaje
-                builder.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Obtenemos las referencias de los mensajes
-                        DatabaseReference mensajesReference = FirebaseDatabase.getInstance()
-                                .getReference("usuarios")
-                                .child(emisor)
-                                .child("conversaciones")
-                                .child(receptor)
-                                .child("mensajes");
+                    // Creamos y configuramos el AlertDialog para eliminar el mensaje
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Eliminar mensaje");
+                    builder.setMessage("Estas seguro que deseas eliminar el mensaje?");
+                    builder.setNegativeButton("Cancelar", null);
+                    // Damos la interacción cuando el usuario confirme que quiere eliminar el mensaje
+                    builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                        Query query = mensajesReference.orderByChild("timestamp").equalTo(timestamp);
-                        query.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    ds.getRef().removeValue();
+                            // Obtenemos las referencias de los mensajes
+                            DatabaseReference mensajesReference = Utils.getUserReference(emisor)
+                                    .child("conversaciones").child(receptor).child("mensajes");
+
+                            Query query = mensajesReference.orderByChild("timestamp").equalTo(timestamp);
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        ds.getRef().removeValue();
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-
-
-                        });
-
-                        DatabaseReference mensajesReference2 = FirebaseDatabase.getInstance()
-                                .getReference("usuarios")
-                                .child(receptor)
-                                .child("conversaciones")
-                                .child(emisor)
-                                .child("mensajes");
-
-                        Query query2 = mensajesReference2.orderByChild("timestamp").equalTo(timestamp);
-                        query2.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    ds.getRef().removeValue();
                                 }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
 
 
-                        });
+                            });
 
-                    }
-                });
-                builder.create().show();
+                            DatabaseReference mensajesReference2 = Utils.getUserReference(receptor)
+                                    .child("conversaciones").child(emisor).child("mensajes");
 
-            }
-        });
+                            Query query2 = mensajesReference2.orderByChild("timestamp").equalTo(timestamp);
+                            query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        ds.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+
+
+                            });
+
+                        }
+                    });
+                    builder.create().show();
+
+                }
+            });
+        }
     }
 
     @Override

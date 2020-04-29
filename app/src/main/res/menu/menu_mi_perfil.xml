@@ -12,7 +12,6 @@
                 android:icon="@drawable/ic_settings"
                 android:title="@string/configuracion"
                 android:visible="true">
-
                 <menu>
 
                     <item
@@ -29,6 +28,12 @@
 
                 </menu>
             </item>
+
+            <item
+                android:id="@+id/bloqueadosMenuItem"
+                android:icon="@drawable/ic_group"
+                android:title="Lista de bloqueados"
+                android:visible="true" />
 
             <item
                 android:id="@+id/cerrarSesionMenuItem"

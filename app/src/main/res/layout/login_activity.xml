@@ -27,7 +27,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:drawableLeft="@drawable/icono_email"
+        android:drawableLeft="@drawable/ic_email"
         android:drawablePadding="20dp"
         android:ems="10"
         android:hint="@string/email"
@@ -73,8 +73,8 @@
             android:id="@+id/contrasenaEtLogin"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:drawableStart="@drawable/icono_candado"
-            android:drawableLeft="@drawable/icono_candado"
+            android:drawableStart="@drawable/ic_padlock"
+            android:drawableLeft="@drawable/ic_padlock"
             android:drawablePadding="20dp"
             android:ems="10"
             android:hint="@string/contrasena"
@@ -101,7 +101,11 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contrasenaEtLoginContainer"
-        app:layout_constraintVertical_bias="0.252" />
+        app:layout_constraintVertical_bias="0.252"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        />
 
     <ImageView
         android:id="@+id/imageView"

@@ -6,6 +6,8 @@ public class Usuario {
 
     private String email, estado, imagen, localidad, nombre, tipo, uid, conexion;
     private HashMap<String, Conversacion> conversaciones;
+    private HashMap<String, Publicacion> publicaciones;
+    private HashMap<String, String> amigos, solicitudesEnviadas;
 
     public Usuario(String email, String estado, String imagen, String localidad, String nombre,
                    String tipo, String uid) {
@@ -90,5 +92,29 @@ public class Usuario {
 
     public void setConversaciones(HashMap<String, Conversacion> conversaciones) {
         this.conversaciones = conversaciones;
+    }
+
+    public HashMap<String, Publicacion> getPublicaciones() {
+        return publicaciones;
+    }
+
+    public void setPublicaciones(HashMap<String, Publicacion> publicaciones) {
+        this.publicaciones = publicaciones;
+    }
+
+    public HashMap<String, String> getAmigos() {
+        return amigos;
+    }
+
+    public void setAmigos(HashMap<String, String> amigos) {
+        this.amigos = amigos;
+    }
+
+    public HashMap<String, String> getSolicitudesEnviadas() {
+        return solicitudesEnviadas;
+    }
+
+    public void setSolicitudesEnviadas(HashMap<String, String> solicitudesEnviadas) {
+        this.solicitudesEnviadas = solicitudesEnviadas;
     }
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.CheckBox;
@@ -13,16 +14,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.CamposBD;
-import com.example.petgram.models.Conversacion;
+import com.example.petgram.Configuracion.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class RegistroActivity extends AppCompatActivity {
 
@@ -189,12 +190,13 @@ public class RegistroActivity extends AppCompatActivity {
         hashMap.put(CamposBD.LOCALIDAD, "No especificada");
         hashMap.put(CamposBD.IMAGEN, "https://firebasestorage.googleapis.com/v0/b/petgram-9e136.appspot.com/o/fotos_perfil%2Ficono_petgram2.JPG?alt=media&token=16d7bdc7-06d0-493f-a61c-8e40ef91caf1");
         hashMap.put(CamposBD.UID, FirebaseAuth.getInstance().getCurrentUser().getUid());
-        hashMap.put(CamposBD.CONEXION, "Nunca se ha conectado al servicio de mensajería");
-        hashMap.put(CamposBD.CONVERSACIONES, new HashMap<String, Conversacion>());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        reference.setValue(hashMap);
+        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        String conexion = "Última conexión - " + DateFormat.format("dd/MM/yyyy hh:mm aa", calendar);
+        hashMap.put(CamposBD.CONEXION, conexion);
+
+        Utils.getMyReference().setValue(hashMap);
     }
 
     private void limpiarErrores() {

@@ -10,18 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import com.example.petgram.adapters.ConversacionAdapter;
+import com.example.petgram.Configuracion.Utils;
+import com.example.petgram.adapters.ConversacionesAdapter;
 import com.example.petgram.models.Conversacion;
 import com.example.petgram.models.Usuario;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 /**
@@ -29,11 +29,12 @@ import java.util.ArrayList;
  */
 public class MensajesFragment extends Fragment {
 
-    // RecyclerView
+    // Views
     private RecyclerView recycler;
+    private ProgressBar progressBar;
 
     // Adapter
-    private ConversacionAdapter adapter;
+    private ConversacionesAdapter adapter;
 
     // Listas de usuarios y conversaciones con estos usuarios
     private ArrayList<Usuario> listaUsuarios;
@@ -41,45 +42,53 @@ public class MensajesFragment extends Fragment {
 
 
     public MensajesFragment() {
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mensajes, container, false);
 
+        findViews(view);
+        prepareRecycler();
+
+        return view;
+    }
+
+    private void prepareRecycler() {
         this.listaUsuarios = new ArrayList<>();
         this.listaConversaciones = new ArrayList<>();
 
-        // Obtenemos las referencias de las vistas
-        this.recycler = view.findViewById(R.id.conversacionesRecyclerView);
-        
         // Montamos nuestro Adapter y LayoutManager y lo asociamos al RecyclerView
-        adapter = new ConversacionAdapter(listaConversaciones,
+        adapter = new ConversacionesAdapter(listaConversaciones,
                 listaUsuarios, getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(layoutManager);
         recycler.setHasFixedSize(true);
 
-        // Obtenemos la referencia del nodo de conversaciones de nuestro usuario
-        DatabaseReference conversacionesReference = FirebaseDatabase.getInstance()
-                .getReference("usuarios")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("conversaciones");
+    }
+
+    private void obtenerDatos() {
+        progressBar.setVisibility(View.VISIBLE);
+        // Limpiamos las listas por si acaso
+        listaConversaciones.clear();
+        listaUsuarios.clear();
+        adapter.notifyDataSetChanged();
 
 
-        // Obtenemos las conversaciones de la referencia y las añadimos a nuestra lista
-        conversacionesReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Obtenemos las conversaciones y las añadimos a nuestra lista
+        Utils.getMyReference().child("conversaciones").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Conversacion conversacion = ds.getValue(Conversacion.class);
-                    listaConversaciones.add(conversacion);
+                    if (ds.hasChild("mensajes")) // Solo añadimos conversaciones con mensajes
+                        listaConversaciones.add(conversacion);
                 }
+
+                Collections.sort(listaConversaciones); // Ordenamos la lista
 
                 /* Guardamos en un ArrayList los UIDs de las conversaciones para obtener posteriormente
                    sus usuarios */
@@ -90,22 +99,18 @@ public class MensajesFragment extends Fragment {
         /* Obtenemos una referencia de cada usuario con su id y obtenemos su valor para guardarla
            en nuestra lista de usuarios*/
                 for (String uid : uids) {
+                    progressBar.setVisibility(View.VISIBLE);
 
-                    DatabaseReference reference = FirebaseDatabase.getInstance()
-                            .getReference("usuarios").child(uid);
-
-                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                   Utils.getUserReference(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             listaUsuarios.add(dataSnapshot.getValue(Usuario.class));
                             adapter.notifyDataSetChanged();
-
-
+                            progressBar.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
                         }
                     });
                 }
@@ -116,11 +121,16 @@ public class MensajesFragment extends Fragment {
 
             }
         });
-
-
-        adapter.notifyDataSetChanged();
-
-        return view;
     }
 
+    private void findViews(View view) {
+        this.recycler = view.findViewById(R.id.conversacionesRecyclerView);
+        this.progressBar = view.findViewById(R.id.progressBarMensajes);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        obtenerDatos();
+    }
 }

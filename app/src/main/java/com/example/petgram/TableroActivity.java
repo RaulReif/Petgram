@@ -7,19 +7,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.petgram.models.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 
 public class TableroActivity extends AppCompatActivity {
 
@@ -49,35 +42,48 @@ public class TableroActivity extends AppCompatActivity {
                     case R.id.publicacionesNavItem:
                         toolbar.setVisibility(View.GONE);
                         PublicacionesFragment publicacionesFragment = new PublicacionesFragment();
-                        FragmentTransaction publicacionesTransaction = getSupportFragmentManager().beginTransaction();
-                        publicacionesTransaction.replace(R.id.fragment, publicacionesFragment, "");
-                        publicacionesTransaction.commit();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment, publicacionesFragment, "")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                                .commit();
                         break;
 
                     case R.id.mensajesNavItem:
                         toolbar.setVisibility(View.GONE);
                         MensajesFragment mensajesFragment = new MensajesFragment();
-                        FragmentTransaction mensajesTransaction = getSupportFragmentManager().beginTransaction();
-                        mensajesTransaction.replace(R.id.fragment, mensajesFragment, "");
-                        mensajesTransaction.commit();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment, mensajesFragment, "")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                                .commit();
+                        break;
+
+                    case R.id.subirPublicacionNavItem:
+                        toolbar.setVisibility(View.GONE);
+                        SubirPublicacionFragment subirPublicacionFragment = new SubirPublicacionFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment, subirPublicacionFragment, "")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                                .commit();
                         break;
 
                     case R.id.socialNavItem:
                         toolbar.setTitle("");
                         toolbar.setVisibility(View.VISIBLE);
                         SocialFragment socialFragment = new SocialFragment();
-                        FragmentTransaction socialTransaction = getSupportFragmentManager().beginTransaction();
-                        socialTransaction.replace(R.id.fragment, socialFragment, "");
-                        socialTransaction.commit();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment, socialFragment, "")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                                .commit();
                         break;
 
                     case R.id.perfilNavItem:
-                        toolbar.setTitle(obtenerNombreUsuario());
+                        toolbar.setTitle("Tu perfil");
                         toolbar.setVisibility(View.VISIBLE);
                         PerfilFragment perfilFragment = new PerfilFragment();
-                        FragmentTransaction perfilTranscaction = getSupportFragmentManager().beginTransaction();
-                        perfilTranscaction.replace(R.id.fragment, perfilFragment, "");
-                        perfilTranscaction.commit();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment, perfilFragment, "")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                                .commit();
                         break;
 
                 }
@@ -94,23 +100,5 @@ public class TableroActivity extends AppCompatActivity {
 
     }
 
-    private String obtenerNombreUsuario() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("usuarios")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        final String[] nombre = {""};
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                nombre[0] = dataSnapshot.getValue(Usuario.class).getNombre();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return nombre[0];
-    }
 
 }

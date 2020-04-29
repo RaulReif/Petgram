@@ -18,7 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.example.petgram.Configuracion.Utils;
+import com.example.petgram.adapters.SolicitudesAmistadAdapter;
 import com.example.petgram.adapters.UsuariosAdapter;
 import com.example.petgram.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,9 +29,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -36,20 +41,21 @@ import java.util.ArrayList;
  */
 public class SocialFragment extends Fragment {
 
-    // Lista de usuarios
-    private ArrayList<Usuario> lista;
+    // Lista de usuarios buscados y solicitudes de asmistad
+    private ArrayList<Usuario> listaUsuarios, listaSolicitudes;
 
     // Referencia de los usuarios
     private DatabaseReference reference;
 
-    // Adapter de usuarios
-    private UsuariosAdapter adapter;
+    // Adapters
+    private UsuariosAdapter adapterUsuarios;
+    private SolicitudesAmistadAdapter adapterSolicitudes;
 
     // Vistas
     private ImageView imagen;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerViewUsuarios, recyclerViewSolicitudes;
 
-    SearchView searchView;
+    private SearchView searchView;
 
     public SocialFragment() {
         // Required empty public constructor
@@ -62,25 +68,86 @@ public class SocialFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_social, container, false);
 
-        // Asociación de las vistas
-        recyclerView = view.findViewById(R.id.recyclerSocial);
-        imagen = view.findViewById(R.id.imagenIvSocial);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setVisibility(View.GONE);
+        findViews(view);
 
-        // Asociamos al recycler un nuevo layout manager
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // Creamos y asociamos el adapter al recycler
-        lista = new ArrayList<>();
-        adapter = new UsuariosAdapter(getActivity(), lista);
-        recyclerView.setAdapter(adapter);
+        gestionarRecyclers();
 
         // Creamos la referencia donde se almacenan los usuarios
         reference = FirebaseDatabase.getInstance().getReference("usuarios");
 
         return view;
+    }
+
+    private void gestionarRecyclers() {
+        gestionarRecyclerUsuarios();
+        gestionarRecyclerSolicitudes();
+    }
+
+    private void gestionarRecyclerUsuarios() {
+        // Asociamos al recycler un nuevo layout manager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        recyclerViewUsuarios.setLayoutManager(layoutManager);
+
+        // Creamos y asociamos el adapterUsuarios al recycler
+        listaUsuarios = new ArrayList<>();
+        adapterUsuarios = new UsuariosAdapter(getActivity(), listaUsuarios);
+        recyclerViewUsuarios.setAdapter(adapterUsuarios);
+    }
+
+    private void gestionarRecyclerSolicitudes() {
+        // Asociamos al recycler un nuevo layout manager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        recyclerViewSolicitudes.setLayoutManager(layoutManager);
+
+        // Creamos y asociamos el adapterUsuarios al recycler
+        listaSolicitudes = new ArrayList<>();
+        adapterSolicitudes = new SolicitudesAmistadAdapter(getActivity(), listaSolicitudes);
+        recyclerViewSolicitudes.setAdapter(adapterSolicitudes);
+
+        // Obtenemos los uids de los usuarios que nos han enviado una solicitud
+        Utils.getMyReference().child("solicitudesRecibidas")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<HashMap<String, String>> genericTypeIndicator =
+                                new GenericTypeIndicator<HashMap<String, String>>() {
+                                };
+
+                        HashMap<String, String> tempHashMap = dataSnapshot.getValue(genericTypeIndicator);
+
+                        ArrayList<String> uids = new ArrayList<>();
+                        if (tempHashMap != null)
+                            uids = new ArrayList<>(tempHashMap.values());
+
+                        for (String uid : uids) {
+                            Utils.getUserReference(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    listaSolicitudes.add(dataSnapshot.getValue(Usuario.class));
+                                    adapterSolicitudes.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void findViews(View view) {
+        recyclerViewUsuarios = view.findViewById(R.id.recyclerUsuariosBuscadosSocial);
+        recyclerViewSolicitudes = view.findViewById(R.id.recyclerSolicitudesSocial);
+        imagen = view.findViewById(R.id.imagenIvSocial);
+        recyclerViewUsuarios.setHasFixedSize(true);
+        recyclerViewUsuarios.setVisibility(View.GONE);
     }
 
     @Override
@@ -121,32 +188,32 @@ public class SocialFragment extends Fragment {
     }
 
     private void buscarUsuarios(final String cadena) {
-       // Comprobamos si el SearchView está vacío, si es así, limpiaremos el array
+        // Comprobamos si el SearchView está vacío, si es así, limpiaremos el array
         if (!cadena.isEmpty()) {
             // No está vacío
-            recyclerView.setVisibility(View.VISIBLE);
+            recyclerViewUsuarios.setVisibility(View.VISIBLE);
             imagen.setVisibility(View.GONE);
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    // Limpiamos la lista de usuarios
-                    lista.clear();
+                    // Limpiamos la listaUsuarios de usuarios
+                    listaUsuarios.clear();
 
                     /* La función getChildren() nos da un Iterator el cual iteraremos para sacar
-                    *  uno por uno todos los DataSnapshot que devuelve que són cada uno de sus nodos
-                    *  (es decir, los usuarios)*/
+                     *  uno por uno todos los DataSnapshot que devuelve que són cada uno de sus nodos
+                     *  (es decir, los usuarios)*/
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         // Obtenemos el usuario del DataSnapshot
                         Usuario usuario = ds.getValue(Usuario.class);
 
                         /* Comprobamos que el usuario no sea el mismo y que su nombre coincida con
-                        *  el texto introducido en el SearchView */
+                         *  el texto introducido en el SearchView */
                         if (!usuario.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                             if (usuario.getNombre().toLowerCase().contains(cadena.toLowerCase()))
-                                lista.add(usuario);
+                                listaUsuarios.add(usuario);
 
                     }
-                    adapter.notifyDataSetChanged();
+                    adapterUsuarios.notifyDataSetChanged();
                 }
 
                 @Override
@@ -156,10 +223,10 @@ public class SocialFragment extends Fragment {
             });
         } else {
             // Está vacío
-            recyclerView.setVisibility(View.GONE);
-            imagen.setVisibility(View.VISIBLE);
-            lista.clear();
-            adapter.notifyDataSetChanged();
+            recyclerViewUsuarios.setVisibility(View.GONE);
+            recyclerViewSolicitudes.setVisibility(View.VISIBLE);
+            listaUsuarios.clear();
+            adapterUsuarios.notifyDataSetChanged();
         }
     }
 

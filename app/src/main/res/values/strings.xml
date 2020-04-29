@@ -8,8 +8,8 @@
     <string name="repetir_contrasena">Repetir Contraseña</string>
     <string name="cancelar">Cancelar</string>
     <string name="cambiar">Cambiar</string>
-    <string name="nombre_usuario">Nombre de usuario</string>
-    <string name="estado_o_biografia">Estado o biografía del usuario</string>
+    <string name="nombre_usuario">Nombre de nombreUsuario</string>
+    <string name="estado_o_biografia">Estado o biografía del nombreUsuario</string>
     <string name="tipo_de_animal">Tipo de animal</string>
     <string name="localidad">Localidad</string>
     <string name="saltar">Saltar</string>
@@ -18,6 +18,8 @@
     <string name="guardar">Guardar</string>
     <string name="editar_perfil">Editar perfil</string>
     <string name="enviar_solicitud_amistad">Enviar solicitud de amistad</string>
+    <string name="cancelar_solicitud_amistad">Cancelar solicitud de amistad</string>
+    <string name="cancelar_amistad">Cancelar amistad</string>
     <string name="configuracion">Configuración</string>
     <string name="cambiar_contrasena">Cambiar contraseña</string>
     <string name="contrasena_actual">Contraseña actual</string>
@@ -25,7 +27,12 @@
     <string name="repetir_nueva_contrasena">Repetir nueva contraseña</string>
     <string name="cambiar_email">Cambiar email</string>
     <string name="nuevo_email">Nuevo email</string>
-    <string name="escribe_tu_mensaje">Escribe tu mensaje aquí...</string>
+    <string name="escribe_tu_mensaje">Escribe tu mensaje aquí&#8230;</string>
+    <string name="subir">Subir</string>
+    <string name="pie_foto">Esctibe aquí el pie de foto de tu publicacion&#8230;</string>
+    <string name="comentarios">Comentarios</string>
+    <string name="escribe_comentario">Escribe un comentario&#8230;</string>
+    <string name="lugar_foto">Lugar de la forografía</string>
 
     <!-- Tipos de animales para un Spinner -->
     <string-array name="tipos_animales">

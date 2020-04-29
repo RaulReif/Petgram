@@ -27,13 +27,13 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ConversacionAdapter extends RecyclerView.Adapter<ConversacionAdapter.ConversacionHolder>{
+public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAdapter.ConversacionHolder>{
 
     private ArrayList<Conversacion> listaConversaciones;
     private ArrayList<Usuario> listaUsuarios;
     private Context context;
 
-    public ConversacionAdapter(ArrayList<Conversacion> listaConversaciones, ArrayList<Usuario> listaUsuarios, Context context) {
+    public ConversacionesAdapter(ArrayList<Conversacion> listaConversaciones, ArrayList<Usuario> listaUsuarios, Context context) {
         this.listaConversaciones = listaConversaciones;
         this.listaUsuarios = listaUsuarios;
         this.context = context;
@@ -59,14 +59,17 @@ public class ConversacionAdapter extends RecyclerView.Adapter<ConversacionAdapte
             // Obtenemos los mensajes de la conversación
             final HashMap<String, Mensaje> mensajes = listaConversaciones.get(position).getMensajes();
 
-            // Obtenemos el último mensaje y los valores de este que nos interesan
+            // Obtenemos el texto del último mensaje
             final Mensaje mensaje = this.obtenerUltimoMensaje(mensajes);
-            final String timestamp = mensaje.getTimestamp();
-            final String mensajeString = mensaje.getMensaje();
+            final long timestamp = mensaje.getTimestamp();
+            String mensajeString = mensaje.getMensaje();
+            if(mensajeString.length() > 28) {
+                mensajeString = mensajeString.substring(0, 28) + "...";
+            }
 
             // Pasamos el timestamp a un formato correcto
             Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-            calendar.setTimeInMillis(Long.parseLong(timestamp));
+            calendar.setTimeInMillis(timestamp);
              String fecha = DateFormat.format("dd/MM HH:mm", calendar).toString();
              fecha = fecha.substring(0, 5) + " " + fecha.substring(5);
 
@@ -102,7 +105,7 @@ public class ConversacionAdapter extends RecyclerView.Adapter<ConversacionAdapte
         long mayorTimestamp = 0;
         Mensaje mensaje = new Mensaje();
         for( Mensaje mensajeTemp : mensajes.values() ) {
-            long timestamp = Long.parseLong(mensajeTemp.getTimestamp());
+            long timestamp = mensajeTemp.getTimestamp();
             if(timestamp > mayorTimestamp) {
                 mayorTimestamp = timestamp;
                 mensaje = mensajeTemp;

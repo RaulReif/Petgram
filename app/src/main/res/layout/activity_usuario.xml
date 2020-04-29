@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -116,6 +116,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:onClick="verAmigos"
                                 android:text="Amigos"
                                 android:textSize="18sp" />
 
@@ -123,6 +124,7 @@
                                 android:id="@+id/amigosTvUsuario"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:onClick="verAmigos"
                                 android:paddingTop="10dp"
                                 android:textColor="#00A89B"
                                 android:textSize="20sp"
@@ -166,21 +168,57 @@
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/enviarSolicitudBtnUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/buttonstyle"
-                android:onClick="enviarSolicitudAmistad"
-                android:text="@string/enviar_solicitud_amistad"
-                android:textColor="#fff"
-                android:visibility="visible" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/enviarSolicitudBtnUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/buttonstyle_green"
+                    android:onClick="enviarSolicitudAmistad"
+                    android:text="@string/enviar_solicitud_amistad"
+                    android:textColor="#fff"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/cancelarSolicitudBtnUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/buttonstyle_red"
+                    android:onClick="cancelarSolicitudAmistad"
+                    android:text="@string/cancelar_solicitud_amistad"
+                    android:textColor="#fff"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/cancelarAmistadBtnUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/buttonstyle"
+                    android:onClick="cancelarAmistad"
+                    android:text="@string/cancelar_amistad"
+                    android:textColor="#fff"
+                    android:visibility="gone" />
+            </FrameLayout>
 
         </LinearLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/publicacionesRecyclerUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

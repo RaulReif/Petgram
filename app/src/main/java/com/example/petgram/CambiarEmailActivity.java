@@ -29,6 +29,22 @@ public class CambiarEmailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cambiar_email);
 
+        prepareToolbar();
+        findViews();
+
+        // Obtenemos el usuario de Firebase
+        usuario = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Rellenamos el campo email con el email del usuario
+        etEmail.setText(usuario.getEmail());
+    }
+
+    private void findViews() {
+        etContrasena = findViewById(R.id.contrasenaEtCambiarEmail);
+        etEmail = findViewById(R.id.emailEtCambiarEmail);
+    }
+
+    private void prepareToolbar() {
         // Asociamos y cambiamos el texto de la toolbar
         Toolbar toolbar = findViewById(R.id.cambiarEmailToolbar);
         toolbar.setTitle("Cambiar email");
@@ -43,16 +59,6 @@ public class CambiarEmailActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        // Asociación de las vistas
-        etContrasena = findViewById(R.id.contrasenaEtCambiarEmail);
-        etEmail = findViewById(R.id.emailEtCambiarEmail);
-
-        // Obtenemos el usuario de Firebase
-        usuario = FirebaseAuth.getInstance().getCurrentUser();
-
-        // Rellenamos el campo email con el email del usuario
-        etEmail.setText(usuario.getEmail());
     }
 
     public void clickCambiar(View view) {
