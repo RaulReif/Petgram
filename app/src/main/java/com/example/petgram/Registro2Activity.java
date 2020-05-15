@@ -74,7 +74,6 @@ public class Registro2Activity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             registro = true;
             ivAtras.setVisibility(View.GONE);
-            Toast.makeText(this, "Cuenta registrada con exito!", Toast.LENGTH_SHORT).show();
         }
         // No venimos de registro
         else {

@@ -47,22 +47,58 @@ public class PublicacionesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_publicaciones, container, false);
 
         recycler = view.findViewById(R.id.publicacionesRecycler);
-
         prepareRecycler();
+        return view;
+    }
 
-        // Obtenemos los uids de nuestros amigos
+    private void obtenerPublicaciones() {
+
+        publicaciones.clear();
+
+        // Obtenemos los uids de nuestros
         Utils.getMyReference().child("amigos").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final GenericTypeIndicator<HashMap<String, String>> genericTypeIndicator =
-                        new GenericTypeIndicator<HashMap<String, String>>() {
-                        };
+                        new GenericTypeIndicator<HashMap<String, String>>() {};
 
-                ArrayList<String> uids =
-                        new ArrayList<String>(dataSnapshot.getValue(genericTypeIndicator).values());
+                HashMap<String, String> hashMap = dataSnapshot.getValue(genericTypeIndicator);
 
-                // Obtenemos las públicaciones de nuestros amigos y las añadimos a la lista
-                obtenerPublicaciones(uids);
+                if(hashMap != null) { // Si el hashMap es nulo significará que el usuario aún no tiene amigos
+                    ArrayList<String>uids =
+                            new ArrayList<>(dataSnapshot.getValue(genericTypeIndicator).values());
+
+                    for (String uid : uids) {
+                        Utils.getUserReference(uid).child("publicaciones")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        GenericTypeIndicator<HashMap<String, Publicacion>> genericTypeIndicator =
+                                                new GenericTypeIndicator<HashMap<String, Publicacion>>() {
+                                                };
+                                        HashMap<String, Publicacion> hashMap = dataSnapshot.getValue(genericTypeIndicator);
+
+
+                                        ArrayList<Publicacion> publicacionesAux = new ArrayList<>();
+                                        if (hashMap != null)
+                                            publicacionesAux = new ArrayList<>(hashMap.values());
+
+                                        for (Publicacion p : publicacionesAux)
+                                            publicaciones.add(p);
+
+                                        Collections.sort(publicaciones);
+                                        adapter.notifyDataSetChanged();
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                    }
+
+                }
             }
 
             @Override
@@ -71,40 +107,7 @@ public class PublicacionesFragment extends Fragment {
             }
         });
 
-        return view;
-    }
 
-    private void obtenerPublicaciones(ArrayList<String> uids) {
-        for (String uid : uids) {
-            Utils.getUserReference(uid).child("publicaciones")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            GenericTypeIndicator<HashMap<String, Publicacion>> genericTypeIndicator =
-                                    new GenericTypeIndicator<HashMap<String, Publicacion>>() {
-                                    };
-                            HashMap<String, Publicacion> hashMap = dataSnapshot.getValue(genericTypeIndicator);
-
-
-                            ArrayList<Publicacion> publicacionesAux = new ArrayList<>();
-                            if (hashMap != null)
-                                publicacionesAux = new ArrayList<>(hashMap.values());
-
-                            for (Publicacion p : publicacionesAux)
-                                publicaciones.add(p);
-
-
-                            Collections.sort(publicaciones);
-                            adapter.notifyDataSetChanged();
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-        }
     }
 
     private void prepareRecycler() {
@@ -116,4 +119,9 @@ public class PublicacionesFragment extends Fragment {
         recycler.setAdapter(adapter);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        obtenerPublicaciones();
+    }
 }

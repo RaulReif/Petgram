@@ -154,7 +154,6 @@ public class RegistroActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             progressDialog.dismiss();
-                            Toast.makeText(RegistroActivity.this, "Registrado", Toast.LENGTH_SHORT).show();
 
                             // Esto nos creara unos datos por defecto para el usuario en la base de datos
                             crearUsuarioFireBase();

@@ -79,6 +79,7 @@ public class SolicitudesAmistadAdapter extends RecyclerView.Adapter<SolicitudesA
                         Toast.makeText(context, "Has rechazado la solicitud de amistad", Toast.LENGTH_SHORT).show();
                     }
                 });
+                builder.create().show();
             }
         });
     }
@@ -92,8 +93,15 @@ public class SolicitudesAmistadAdapter extends RecyclerView.Adapter<SolicitudesA
         Utils.getMyReference().child("solicitudesRecibidas")
                 .child(usuario.getUid()).removeValue();
 
+        Utils.getMyReference().child("solicitudesEnviadas")
+                .child(usuario.getUid()).removeValue();
+
         // Eliminamos la solicitud de las solicitudes enviadas del otro usuario
         Utils.getUserReference(usuario.getUid()).child("solicitudesEnviadas")
+                .child(miUid).removeValue();
+
+        // Eliminamos la solicitud de las solicitudes enviadas del otro usuario
+        Utils.getUserReference(usuario.getUid()).child("solicitudesRecibidas")
                 .child(miUid).removeValue();
     }
 

@@ -39,7 +39,7 @@
         android:id="@+id/subirBtnSubirPublicacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="15sp"
         android:background="@drawable/boton_azul_claro"
         android:text="@string/subir"
         android:textColor="#FFFFFF"

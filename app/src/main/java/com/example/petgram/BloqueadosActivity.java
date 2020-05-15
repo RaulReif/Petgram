@@ -32,7 +32,7 @@ public class BloqueadosActivity extends AppCompatActivity {
 
         prepareToolbar();
 
-        Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
+        Utils.getMyReference().child("conversaciones").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         // Obtenemos todas las conversaciones que esten bloqueadas

@@ -19,7 +19,8 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            android:visibility="visible" />
+            android:visibility="visible"
+            app:titleTextColor="#FFFFFF" />
 
         <LinearLayout
             android:layout_width="match_parent"

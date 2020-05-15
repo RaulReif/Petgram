@@ -48,12 +48,39 @@ public class ComentariosAdapter extends RecyclerView.Adapter<ComentariosAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ComentarioHolder holder, int position) {
-        Comentario comentario = lista.get(position);
+    public void onBindViewHolder(@NonNull final ComentarioHolder holder, int position) {
+        final Comentario comentario = lista.get(position);
 
-        holder.tvNombre.setText(comentario.getNombreUsuario() + " ");
         holder.tvContenido.setText(comentario.getContenido());
-        Picasso.get().load(comentario.getFotoPerfil()).into(holder.ivFoto);
+
+        // Obtenemos y asociamos el nombre del usuario
+        Utils.getUserReference(comentario.getUidUsuarioDelComentario()).
+                child("nombre").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                holder.tvNombre.setText(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Obtenemos y asociamos la foto de perfil del usuario
+        Utils.getUserReference(comentario.getUidUsuarioDelComentario()).
+                child("imagen").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Picasso.get().load(dataSnapshot.getValue(String.class)).into(holder.ivFoto);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(comentario.getTimestamp());

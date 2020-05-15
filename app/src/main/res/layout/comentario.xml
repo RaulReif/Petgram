@@ -8,21 +8,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="12sp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="2sp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/fotoIvComentario"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center"
             android:src="@drawable/icono_petgram2" />
 
         <TextView
             android:id="@+id/nombreTvComentario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginLeft="8sp"
-            android:layout_weight="1"
+            android:inputType="textLongMessage"
+            android:lines="1"
+            android:maxLines="1"
+            android:singleLine="false"
             android:text="TextView"
             android:textStyle="bold" />
 
@@ -30,8 +35,9 @@
             android:id="@+id/comentarioTvComentario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5sp"
-            android:layout_weight="50"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10sp"
+            android:paddingRight="5sp"
             android:text="TextView" />
 
     </LinearLayout>
@@ -40,7 +46,8 @@
         android:id="@+id/fechaTvComentario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="120sp"
+        android:gravity="right"
+        android:paddingRight="5sp"
         android:text="TextView" />
 
 </LinearLayout>

@@ -71,6 +71,13 @@ public class ChatActivity extends AppCompatActivity {
     // El otro usuario
     private Usuario usuario;
 
+    // Listeners
+    private ValueEventListener comprobarLeidoListener;
+    private ValueEventListener comprobarLeidoOtroUsuarioListener;
+    private ValueEventListener leerMensajesListener;
+    private ValueEventListener comprobarBloqueadoListener;
+    private ValueEventListener comprobarBloqueadoOtroUsuarioListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,9 +97,6 @@ public class ChatActivity extends AppCompatActivity {
 
         this.conversacionOtroUsuario = Utils.getUserReference(uidOtroUsuario).child("conversaciones")
                 .child(this.uidUsuario);
-
-        // Comprobamos si ya se ha iniciado una conversación con el otro usuario
-        this.existeConversacion = existeConversacion();
 
         // Cambiamos el estado de conexion de nuestro usuario
         cambiarEstadoConexion("En línea");
@@ -130,7 +134,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void comprobarLeido() {
-        this.conversacionUsuario.child("mensajes")
+        comprobarLeidoListener = this.conversacionUsuario.child("mensajes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -152,7 +156,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-        this.conversacionOtroUsuario.child("mensajes")
+        comprobarLeidoOtroUsuarioListener = this.conversacionOtroUsuario.child("mensajes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -194,28 +198,33 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter(this, listaMensajes);
         recyclerView.setAdapter(chatAdapter);
 
-        this.conversacionUsuario.addValueEventListener(new ValueEventListener() {
+        leerMensajesListener = this.conversacionUsuario.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Conversacion c = dataSnapshot.getValue(Conversacion.class);
                 listaMensajes.clear();
-                if(c.getMensajes() != null)
-                for (Mensaje mensaje : c.getMensajes().values())
-                    listaMensajes.add(mensaje);
+                if (c.getMensajes() != null)
+                    for (Mensaje mensaje : c.getMensajes().values())
+                        listaMensajes.add(mensaje);
 
                 Collections.sort(listaMensajes);
                 chatAdapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(listaMensajes.size() - 1);
+
+                // Pasamos los mensajes no leídos a 0
+                dataSnapshot.getRef().child("mensajesNoLeidos").setValue(0);
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
         });
 
 
     }
 
     private void comprobarBloqueados() {
-        conversacionUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
+        comprobarBloqueadoListener = conversacionUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean bloqueado = dataSnapshot.getValue(Boolean.class);
@@ -231,7 +240,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        conversacionOtroUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
+        comprobarBloqueadoOtroUsuarioListener = conversacionOtroUsuario.child("bloqueado").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 bloqueado = dataSnapshot.getValue(Boolean.class);
@@ -306,22 +315,18 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private boolean existeConversacion() {
-
+    private void existeConversacion() {
         this.conversacionUsuario.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 existeConversacion = dataSnapshot.hasChild("mensajes");
-                if(existeConversacion)
+                if (existeConversacion)
                     listeners();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-        return true;
     }
 
     private void cambiarEstadoConexion(String conexion) {
@@ -331,35 +336,71 @@ public class ChatActivity extends AppCompatActivity {
         Utils.getMyReference().updateChildren(hashMap);
     }
 
-    public void enviar(View view) {
+    public void clickEnviar(View view) {
         if (!bloqueado) {
+
             String mensajeString = etMensaje.getText().toString().trim();
+
             if (!mensajeString.isEmpty()) {
-                // Creamos el Objeto Mensaje
+
                 Mensaje mensaje = new Mensaje(uidUsuario, uidOtroUsuario, mensajeString);
 
-                // Comprobamos si ya existe la conversación y de no ser asi la creamos
-                if (!this.existeConversacion) {
-                    this.conversacionUsuario.setValue(new Conversacion(this.uidOtroUsuario));
-                    this.conversacionOtroUsuario.setValue(new Conversacion(this.uidUsuario));
-                    this.existeConversacion = true;
-                    listeners();
+                if (this.existeConversacion) {
+                    enviarMensaje(mensajeString);
+                } else {
+                    crearConversaciones(mensajeString);
                 }
-
-                // Creamos las referencias donde queremos almacenar el mensaje  y lo guardamos
-                this.conversacionUsuario.child("mensajes").push().setValue(mensaje);
-                this.conversacionOtroUsuario.child("mensajes").push().setValue(mensaje);
-
-                // Cambiamos el timestamp del último mensaje de las conversaciones
-                this.conversacionUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
-                this.conversacionOtroUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
-
-                // Limpiamos el campo de texto
-                etMensaje.setText("");
             }
         } else {
             Toast.makeText(this, this.usuario.getNombre() + " te ha bloqueado", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void crearConversaciones(final String mensaje) {
+        Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Usuario usuarioAux = dataSnapshot.getValue(Usuario.class);
+                conversacionOtroUsuario.setValue(new Conversacion(uidUsuario,
+                        usuarioAux.getNombre(), usuarioAux.getImagen()));
+                conversacionUsuario.setValue(new Conversacion(uidOtroUsuario, usuario.getNombre(), usuario.getImagen()));
+
+                enviarMensaje(mensaje);
+                existeConversacion = true;
+                listeners();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void enviarMensaje(String contenidoMensaje) {
+        Mensaje mensaje = new Mensaje(uidUsuario, uidOtroUsuario, contenidoMensaje);
+        // Creamos las referencias donde queremos almacenar el mensaje  y lo guardamos
+        this.conversacionUsuario.child("mensajes").push().setValue(mensaje);
+        this.conversacionOtroUsuario.child("mensajes").push().setValue(mensaje);
+
+        // Cambiamos el timestamp del último mensaje de las conversaciones
+        this.conversacionUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
+        this.conversacionOtroUsuario.child("ultimoMensaje").setValue(System.currentTimeMillis());
+
+        //Augmentamos los mensajes no leídos en uno
+        conversacionOtroUsuario.child("mensajesNoLeidos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().setValue(dataSnapshot.getValue(Integer.class) + 1);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Limpiamos el campo de texto
+        etMensaje.setText("");
     }
 
     public void irPerfil(View view) {
@@ -409,6 +450,16 @@ public class ChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void removeListeners() {
+        if(existeConversacion) {
+            conversacionUsuario.removeEventListener(leerMensajesListener);
+            conversacionUsuario.removeEventListener(comprobarBloqueadoListener);
+            conversacionUsuario.removeEventListener(comprobarLeidoListener);
+            conversacionOtroUsuario.removeEventListener(comprobarBloqueadoOtroUsuarioListener);
+            conversacionOtroUsuario.removeEventListener(comprobarLeidoOtroUsuarioListener);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -422,11 +473,11 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(System.currentTimeMillis());
         String conexion = "Última conexión - " + DateFormat.format("dd/MM/yyyy hh:mm aa", calendar);
         cambiarEstadoConexion(conexion);
+        removeListeners();
     }
 
     @Override
@@ -436,12 +487,14 @@ public class ChatActivity extends AppCompatActivity {
         calendar.setTimeInMillis(System.currentTimeMillis());
         String conexion = "Última conexión - " + DateFormat.format("dd/MM/yyyy hh:mm aa", calendar);
         cambiarEstadoConexion(conexion);
-
+        removeListeners();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // Comprobamos si ya se ha iniciado una conversación con el otro usuario
+        existeConversacion();
         cambiarEstadoConexion("En línea");
     }
 }

@@ -2,31 +2,23 @@ package com.example.petgram.models;
 
 public class Comentario {
 
-    private String contenido, nombreUsuario, uidUsuarioDelComentario,
-            fotoPerfil, uidPublicacion, uidUsuarioPublicacion;
+    private String contenido,  nombreUsuario, uidUsuarioDelComentario, uidPublicacion, uidUsuarioPublicacion;
 
     private long timestamp;
 
-    public Comentario( String contenido, String nombreUsuario, String uidUsuario, String fotoPerfil,
+    public Comentario( String contenido, String nombreUsuario, String uidUsuario,
                        String uidPublicacion, String uidUsuarioPublicacion) {
         this.contenido = contenido;
-        this.nombreUsuario = nombreUsuario;
         this.uidUsuarioDelComentario = uidUsuario;
-        this.fotoPerfil = fotoPerfil;
         this.uidPublicacion = uidPublicacion;
         this.uidUsuarioPublicacion = uidUsuarioPublicacion;
+        this.nombreUsuario = nombreUsuario;
         this.timestamp = System.currentTimeMillis();
     }
 
     public Comentario() {}
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
 
     public String getContenido() {
         return contenido;
@@ -44,14 +36,6 @@ public class Comentario {
         this.uidUsuarioDelComentario = uidUsuarioDelComentario;
     }
 
-    public String getFotoPerfil() {
-        return fotoPerfil;
-    }
-
-    public void setFotoPerfil(String fotoPerfil) {
-        this.fotoPerfil = fotoPerfil;
-    }
-
     public String getUidPublicacion() {
         return uidPublicacion;
     }
@@ -63,6 +47,7 @@ public class Comentario {
     public String getUidUsuarioPublicacion() {
         return uidUsuarioPublicacion;
     }
+
     public void setUidUsuarioPublicacion(String uidUsuarioPublicacion) {
         this.uidUsuarioPublicacion = uidUsuarioPublicacion;
     }
@@ -73,5 +58,13 @@ public class Comentario {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 }

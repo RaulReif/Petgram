@@ -33,6 +33,9 @@
     <string name="comentarios">Comentarios</string>
     <string name="escribe_comentario">Escribe un comentario&#8230;</string>
     <string name="lugar_foto">Lugar de la forografía</string>
+    <string name="buscar_usuarios">Buscar usuarios</string>
+    <string name="solicitudes_amistad">Solicitudes amistad</string>
+    <string name="lista_bloqueados">Lísta de bloqueados</string>
 
     <!-- Tipos de animales para un Spinner -->
     <string-array name="tipos_animales">

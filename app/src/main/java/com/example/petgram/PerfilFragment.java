@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.petgram.Configuracion.Utils;
@@ -44,7 +45,7 @@ public class PerfilFragment extends Fragment {
 
     // Views
     private TextView tvNombre, tvLocalidad, tvEstado, tvPublicaciones, tvAmigos, tvLblAmigos;
-    private CircleImageView ivPerfil;
+    private CircleImageView ivPerfil, ivMenu;
     private RecyclerView recycler;
     private Button btnEditarPerfil;
 
@@ -85,6 +86,7 @@ public class PerfilFragment extends Fragment {
         this.tvAmigos = view.findViewById(R.id.amigosTvPerfil);
         this.tvLblAmigos = view.findViewById(R.id.amiglosLblEtPerfil);
         this.ivPerfil = view.findViewById(R.id.imagenIvPerfil);
+        this.ivMenu = view.findViewById(R.id.menuIvPerfil);
         this.recycler = view.findViewById(R.id.publicacionesRecyclerPerfil);
         this.btnEditarPerfil = view.findViewById(R.id.editarPerfilBtnPerfil);
     }
@@ -154,6 +156,13 @@ public class PerfilFragment extends Fragment {
                 verAmigos();
             }
         });
+        this.ivMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MenuActivity.class));
+            }
+        });
+
     }
 
     private int obtenerNumeroAmigos(Usuario u) {
@@ -168,37 +177,6 @@ public class PerfilFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_mi_perfil, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.cerrarSesionMenuItem: {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getContext(), LoginActivity.class));
-                getActivity().finish();
-                break;
-            }
-            case R.id.cambiarEmailMenuItem: {
-                startActivity(new Intent(getContext(), CambiarEmailActivity.class));
-                break;
-            }
-            case R.id.cambiarContrasenaMenuItem: {
-                startActivity(new Intent(getContext(), CambiarContrasenaActivity.class));
-                break;
-            }
-            case R.id.bloqueadosMenuItem: {
-                startActivity(new Intent(getContext(), BloqueadosActivity.class));
-                break;
-            }
-        }
-        return true;
     }
 
     public  void verAmigos() {

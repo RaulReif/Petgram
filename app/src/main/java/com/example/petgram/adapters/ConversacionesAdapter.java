@@ -14,6 +14,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.petgram.ChatActivity;
+import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.R;
 import com.example.petgram.models.Conversacion;
 import com.example.petgram.models.Mensaje;
@@ -29,14 +30,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAdapter.ConversacionHolder>{
 
-    private ArrayList<Conversacion> listaConversaciones;
-    private ArrayList<Usuario> listaUsuarios;
+    private ArrayList<Conversacion> lista;
     private Context context;
 
-    public ConversacionesAdapter(ArrayList<Conversacion> listaConversaciones, ArrayList<Usuario> listaUsuarios, Context context) {
-        this.listaConversaciones = listaConversaciones;
-        this.listaUsuarios = listaUsuarios;
+    public ConversacionesAdapter(Context context, ArrayList<Conversacion> lista) {
         this.context = context;
+        this.lista = lista;
     }
 
     @NonNull
@@ -48,43 +47,32 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
     @Override
     public void onBindViewHolder(@NonNull ConversacionHolder holder, int position) {
 
-        //Solo ejecutaremos el onBindViewHolder si las listas tienen el mismo size
-        if(this.listaConversaciones.size() == this.listaUsuarios.size()) {
-
-            // Obtenemos los datos del usuario
-            final String fotoPerfil = listaUsuarios.get(position).getImagen();
-            final String nombre = listaUsuarios.get(position).getNombre();
-            final String uid = listaUsuarios.get(position).getUid();
+            final Conversacion conversacion = lista.get(position);
 
             // Obtenemos los mensajes de la conversación
-            final HashMap<String, Mensaje> mensajes = listaConversaciones.get(position).getMensajes();
+            final HashMap<String, Mensaje> mensajes = conversacion.getMensajes();
 
             // Obtenemos el texto del último mensaje
             final Mensaje mensaje = this.obtenerUltimoMensaje(mensajes);
-            final long timestamp = mensaje.getTimestamp();
             String mensajeString = mensaje.getMensaje();
             if(mensajeString.length() > 28) {
                 mensajeString = mensajeString.substring(0, 28) + "...";
             }
 
-            // Pasamos el timestamp a un formato correcto
-            Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-            calendar.setTimeInMillis(timestamp);
-             String fecha = DateFormat.format("dd/MM HH:mm", calendar).toString();
-             fecha = fecha.substring(0, 5) + " " + fecha.substring(5);
+            String fecha = Utils.getStringFecha(mensaje.getTimestamp());
 
             // Asociamos los datos
-            holder.nombre.setText(nombre);
+            holder.nombre.setText(conversacion.getNombreUsuario());
             holder.fecha.setText(fecha);
             holder.ultimoMensaje.setText(mensajeString);
-            Picasso.get().load(fotoPerfil).into(holder.fotoPerfil);
+            Picasso.get().load(conversacion.getFotoPerfil()).into(holder.fotoPerfil);
 
             // Damos el evento de ir al chat
             holder.card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    bundle.putString("uid", uid);
+                    bundle.putString("uid", conversacion.getUid());
                     Intent intent = new Intent(context, ChatActivity.class);
                     intent.putExtras(bundle);
                     context.startActivity(intent);
@@ -92,12 +80,11 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
                 }
             });
 
-        }
     }
 
     @Override
     public int getItemCount() {
-        return this.listaConversaciones.size();
+        return this.lista.size();
     }
 
     // Obtiene el último mensaje del HashMap de Mensajes pasado cómo parametro

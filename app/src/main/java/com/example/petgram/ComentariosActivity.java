@@ -14,6 +14,7 @@ import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.adapters.ComentariosAdapter;
 import com.example.petgram.models.Comentario;
 import com.example.petgram.models.Publicacion;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -99,14 +100,12 @@ public class ComentariosActivity extends AppCompatActivity {
     public void clickComentar(View view) {
         final String mensaje = etComentario.getText().toString().trim();
         if (!mensaje.isEmpty()) {
-            Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
+            Utils.getMyReference().child("nombre").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Comentario comentario = new Comentario( mensaje,
-                            dataSnapshot.child("nombre").getValue(String.class),
-                            dataSnapshot.child("uid").getValue(String.class),
-                            dataSnapshot.child("imagen").getValue(String.class),
-                            publicacion.getUid(), publicacion.getUidUsuario());
+                    String miUid = FirebaseAuth.getInstance().getUid();
+                    Comentario comentario = new Comentario( mensaje, dataSnapshot.getValue(String.class),
+                            miUid, publicacion.getId(), publicacion.getUidUsuario());
 
                     Utils.getUserReference(uidUsuario).child("publicaciones")
                             .child(uidPublicacion).child("comentarios").push().setValue(comentario);

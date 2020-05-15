@@ -8,18 +8,18 @@ import java.util.HashMap;
 
 public class Publicacion implements Parcelable, Comparable<Publicacion> {
 
-    private String foto, pieFoto, uidUsuario, nombreUsuario, lugar, uid;
+    private String foto, pieFoto, uidUsuario, nombreUsuario, lugar, id;
     private HashMap<String, Comentario> comentarios;
     private Long timestamp;
 
-    public Publicacion(String idUsuario, String foto, String pieFoto, String nombreUsuario, long timestamp, String lugar, String uid) {
+    public Publicacion(String idUsuario, String foto, String pieFoto, String nombreUsuario, long timestamp, String lugar, String id) {
         this.foto = foto;
         this.pieFoto = pieFoto;
         this.uidUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.timestamp = timestamp;
         this.lugar = lugar;
-        this.uid = uid;
+        this.id = id;
     }
 
     public Publicacion() {
@@ -116,12 +116,12 @@ public class Publicacion implements Parcelable, Comparable<Publicacion> {
         return 0;
     }
 
-    public String getUid() {
-        return uid;
+    public String getId() {
+        return id;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setId(String uid) {
+        this.id = uid;
     }
 
     @Override

@@ -15,7 +15,9 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="#FFFFFF"
+        app:theme="@style/ToolbarTheme"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerComentarios"
@@ -46,7 +48,7 @@
         android:id="@+id/enviarComentarioIvComentarios"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="6sp"
+        android:layout_margin="8sp"
         android:onClick="clickComentar"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"

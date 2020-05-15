@@ -61,6 +61,19 @@
 
                 </LinearLayout>
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/menuIvPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="15sp"
+                    android:layout_marginRight="15sp"
+                    android:src="@drawable/ic_menu"
+                    tools:srcCompat="@drawable/ic_menu" android:clickable="true"
+                    />
+
                 <androidx.cardview.widget.CardView
                     android:layout_width="400dp"
                     android:layout_height="120dp"

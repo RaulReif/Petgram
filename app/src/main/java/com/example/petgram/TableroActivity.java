@@ -1,46 +1,80 @@
 package com.example.petgram;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
+import com.luseen.spacenavigation.SpaceItem;
+import com.luseen.spacenavigation.SpaceNavigationView;
+import com.luseen.spacenavigation.SpaceOnClickListener;
 
 
 public class TableroActivity extends AppCompatActivity {
 
-    // Views
-    private Toolbar toolbar;
+    private SpaceNavigationView nav;
 
-    // FireBase
-    private FirebaseAuth firebaseAuth;
+    // Constantes Space items (items del navbar)
+    private final String _PUBLICACIONES = "publicaciones";
+    private final String _MENSAJES = "mensajes";
+    private final String _SOCIAL = "social";
+    private final String _PERFIL = "perfil";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tablero);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        findViews();
+        gestionarNavbar(savedInstanceState);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        // Cargamos el fragment de las Publicaciones por defecto
+        PublicacionesFragment publicacionesFragment = new PublicacionesFragment();
+        FragmentTransaction publicacionesTransaction = getSupportFragmentManager().beginTransaction();
+        publicacionesTransaction.replace(R.id.fragment, publicacionesFragment, "");
+        publicacionesTransaction.commit();
+    }
 
-        BottomNavigationView nav = findViewById(R.id.navigation);
+    private void findViews() {
+        nav = findViewById(R.id.navigation);
+    }
 
-        // Creamos la interacción del navbar
-        nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private void gestionarNavbar(Bundle savedInstanceState) {
+        nav.initWithSaveInstanceState(savedInstanceState);
+        nav.showIconOnly();
+        nav.setCentreButtonSelectable(true);
+        nav.setInActiveCentreButtonIconColor(getResources().getColor(R.color.darkWhite));
+        nav.setActiveCentreButtonIconColor(getResources().getColor(R.color.colorWhite));
+        nav.setActiveCentreButtonBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        crearSpaceItems();
+        spaceItemsListeners();
+    }
+
+    private void crearSpaceItems() {
+        nav.addSpaceItem(new SpaceItem(_PUBLICACIONES, R.drawable.ic_home));
+        nav.addSpaceItem(new SpaceItem(_MENSAJES, R.drawable.ic_message));
+        nav.setCentreButtonIcon(R.drawable.ic_add_photo);
+        nav.addSpaceItem(new SpaceItem(_SOCIAL, R.drawable.ic_social));
+        nav.addSpaceItem(new SpaceItem(_PERFIL, R.drawable.ic_profile));
+    }
+
+    private void spaceItemsListeners() {
+        nav.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.publicacionesNavItem:
-                        toolbar.setVisibility(View.GONE);
+            public void onCentreButtonClick() {
+                SubirPublicacionFragment subirPublicacionFragment = new SubirPublicacionFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment, subirPublicacionFragment, "")
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
+                        .commit();
+                nav.setCentreButtonSelected();
+            }
+
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+                switch (itemName) {
+                    case _PUBLICACIONES:
                         PublicacionesFragment publicacionesFragment = new PublicacionesFragment();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment, publicacionesFragment, "")
@@ -48,8 +82,7 @@ public class TableroActivity extends AppCompatActivity {
                                 .commit();
                         break;
 
-                    case R.id.mensajesNavItem:
-                        toolbar.setVisibility(View.GONE);
+                    case _MENSAJES:
                         MensajesFragment mensajesFragment = new MensajesFragment();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment, mensajesFragment, "")
@@ -57,18 +90,7 @@ public class TableroActivity extends AppCompatActivity {
                                 .commit();
                         break;
 
-                    case R.id.subirPublicacionNavItem:
-                        toolbar.setVisibility(View.GONE);
-                        SubirPublicacionFragment subirPublicacionFragment = new SubirPublicacionFragment();
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment, subirPublicacionFragment, "")
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).addToBackStack(null)
-                                .commit();
-                        break;
-
-                    case R.id.socialNavItem:
-                        toolbar.setTitle("");
-                        toolbar.setVisibility(View.VISIBLE);
+                    case _SOCIAL:
                         SocialFragment socialFragment = new SocialFragment();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment, socialFragment, "")
@@ -76,9 +98,7 @@ public class TableroActivity extends AppCompatActivity {
                                 .commit();
                         break;
 
-                    case R.id.perfilNavItem:
-                        toolbar.setTitle("Tu perfil");
-                        toolbar.setVisibility(View.VISIBLE);
+                    case _PERFIL:
                         PerfilFragment perfilFragment = new PerfilFragment();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment, perfilFragment, "")
@@ -87,17 +107,12 @@ public class TableroActivity extends AppCompatActivity {
                         break;
 
                 }
+            }
 
-                return true;
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
             }
         });
-
-        // Cargamos el fragment de las Publicaciones por defecto
-        PublicacionesFragment publicacionesFragment = new PublicacionesFragment();
-        FragmentTransaction publicacionesTransaction = getSupportFragmentManager().beginTransaction();
-        publicacionesTransaction.replace(R.id.fragment, publicacionesFragment, "");
-        publicacionesTransaction.commit();
-
     }
 
 

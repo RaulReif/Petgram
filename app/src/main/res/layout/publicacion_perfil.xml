@@ -7,11 +7,11 @@
 
     <ImageView
         android:id="@+id/publicacionIvPublicacionesPerfil"
-        android:layout_width="135sp"
-        android:layout_height="135sp"
-        android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/avatars[0]"
+        android:layout_width="match_parent"
+        android:layout_height="125sp"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"/>
+        android:foreground="?android:attr/selectableItemBackground"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars[0]" />
 </LinearLayout>

@@ -16,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:theme="@style/ToolbarTheme">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/fotoPerfilIvChat"
@@ -106,7 +107,7 @@
         android:id="@+id/enviarImChat"
         android:layout_width="30sp"
         android:layout_height="30sp"
-        android:onClick="enviar"
+        android:onClick="clickEnviar"
         android:src="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="@+id/mensajeEtChat"
         app:layout_constraintEnd_toEndOf="parent"
