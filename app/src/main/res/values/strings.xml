@@ -8,8 +8,8 @@
     <string name="repetir_contrasena">Repetir Contraseña</string>
     <string name="cancelar">Cancelar</string>
     <string name="cambiar">Cambiar</string>
-    <string name="nombre_usuario">Nombre de nombreUsuario</string>
-    <string name="estado_o_biografia">Estado o biografía del nombreUsuario</string>
+    <string name="nombre_usuario">Nombre de usuario</string>
+    <string name="estado_o_biografia">Estado o biografía de tu perfil</string>
     <string name="tipo_de_animal">Tipo de animal</string>
     <string name="localidad">Localidad</string>
     <string name="saltar">Saltar</string>
@@ -35,7 +35,8 @@
     <string name="lugar_foto">Lugar de la forografía</string>
     <string name="buscar_usuarios">Buscar usuarios</string>
     <string name="solicitudes_amistad">Solicitudes amistad</string>
-    <string name="lista_bloqueados">Lísta de bloqueados</string>
+    <string name="lista_bloqueados">Lista de bloqueados</string>
+    <string name="modificar">Modificar</string>
 
     <!-- Tipos de animales para un Spinner -->
     <string-array name="tipos_animales">
@@ -53,6 +54,7 @@
         <item>Hámster</item>
         <item>Invertebrado</item>
         <item>Loro</item>
+        <item>Ninfa</item>
         <item>Pato</item>
         <item>Periquito</item>
         <item>Perro</item>

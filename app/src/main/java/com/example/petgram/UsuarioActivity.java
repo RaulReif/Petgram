@@ -5,7 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,10 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.petgram.Configuracion.Utils;
+import com.example.petgram.adapters.PublicacionesAdapter;
 import com.example.petgram.adapters.PublicacionesPerfilAdapter;
 import com.example.petgram.models.Publicacion;
 import com.example.petgram.models.Usuario;
@@ -29,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,6 +52,12 @@ public class UsuarioActivity extends AppCompatActivity {
     private CircleImageView ivPerfil;
     private Toolbar toolbar;
     private RecyclerView recycler;
+    private ImageView ivVisualizacionPublicaciones;
+    private SwipeRefreshLayout refreshLayuot;
+
+    private String visualizacionPublicaciones;
+    private final String LINEAR = "LinearLayout";
+    private final String GRID = "GridLayout";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +65,12 @@ public class UsuarioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_usuario);
 
         this.miUid = FirebaseAuth.getInstance().getUid();
+
         this.findViews();
-        this.bindData(); // Se llama a comprobarAmistad dentro de está función
+
+        prepareRefreshLayout();
+
+        visualizacionPublicaciones = GRID;
     }
 
 
@@ -69,9 +84,22 @@ public class UsuarioActivity extends AppCompatActivity {
         this.btnCancelarSolicitud = findViewById(R.id.cancelarSolicitudBtnUsuario);
         this.btnCancelarAmistad = findViewById(R.id.cancelarAmistadBtnUsuario);
         this.ivPerfil = findViewById(R.id.imagenIvUsuario);
+        this.ivVisualizacionPublicaciones = findViewById(R.id.visualizacionPublicacionesUsuario);
         this.recycler = findViewById(R.id.publicacionesRecyclerUsuario);
         this.toolbar = findViewById(R.id.toolbarUsuario);
+        this.refreshLayuot = findViewById(R.id.refreshLayoutUsuario);
         setSupportActionBar(toolbar);
+    }
+
+    private void prepareRefreshLayout() {
+        refreshLayuot.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+                refreshLayuot.setRefreshing(false);
+            }
+        });
+        refreshLayuot.setColorSchemeResources(R.color.colorPrimary);
     }
 
     private void bindData() { // Se comprueba la amistad al final del metodo
@@ -79,7 +107,7 @@ public class UsuarioActivity extends AppCompatActivity {
         DatabaseReference reference = Utils.getUserReference(getIntent().getExtras()
                 .getString("uid"));
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Obtenemos la información
@@ -101,11 +129,11 @@ public class UsuarioActivity extends AppCompatActivity {
                 tvPublicaciones.setText(String.valueOf(listaPublicaciones.size()));
 
                 // Montamos nuestro recycler
-                PublicacionesPerfilAdapter adapter = new PublicacionesPerfilAdapter(UsuarioActivity.this, listaPublicaciones);
-                RecyclerView.LayoutManager layoutManager = new GridLayoutManager(UsuarioActivity.this, 3);
-                recycler.setAdapter(adapter);
-                recycler.setLayoutManager(layoutManager);
-                recycler.setHasFixedSize(true);
+                if(visualizacionPublicaciones.equals(GRID)) {
+                    montarRecyclerGrid();
+                } else {
+                    montarRecyclerLinear();
+                }
 
                 comprobarAmistad();
             }
@@ -119,6 +147,7 @@ public class UsuarioActivity extends AppCompatActivity {
     private void obtenerListaPublicaciones() {
         if (usuario.getPublicaciones() != null) {
             listaPublicaciones = new ArrayList<>(usuario.getPublicaciones().values());
+            Collections.sort(listaPublicaciones);
         } else {
             listaPublicaciones = new ArrayList<>();
         }
@@ -133,6 +162,10 @@ public class UsuarioActivity extends AppCompatActivity {
     }
 
     private void comprobarAmistad() {
+        btnCancelarAmistad.setVisibility(View.GONE);
+        btnCancelarSolicitud.setVisibility(View.GONE);
+        btnEnviarSolicitud.setVisibility(View.GONE);
+
         Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -159,12 +192,12 @@ public class UsuarioActivity extends AppCompatActivity {
 
         btnEnviarSolicitud.setVisibility(View.GONE);
         btnCancelarSolicitud.setVisibility(View.VISIBLE);
-        Toast.makeText(this, "Has enviado una solicitud de amistas a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Has enviado una solicitud de amistad a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
     }
 
     public void cancelarSolicitudAmistad(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Estas seguro que quieres cancelar la solicitud de amistad?");
+        builder.setMessage("Estás seguro que quieres cancelar la solicitud de amistad?");
         builder.setNegativeButton("Cancelar", null);
         builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
@@ -181,7 +214,7 @@ public class UsuarioActivity extends AppCompatActivity {
 
     public void cancelarAmistad(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Estas seguro que quieres dejar de ser amigo de " + usuario.getNombre() + "?");
+        builder.setMessage("Estás seguro que quieres dejar de ser amigo de " + usuario.getNombre() + "?");
         builder.setNegativeButton("Cancelar", null);
         builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
@@ -202,6 +235,34 @@ public class UsuarioActivity extends AppCompatActivity {
         bundle.putString("uid", usuario.getUid());
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    public void cambiarVisualizacionPublicaciones(View view) {
+        if(visualizacionPublicaciones.equals(GRID)) {
+            montarRecyclerLinear();
+        } else {
+            montarRecyclerGrid();
+        }
+    }
+
+    private void montarRecyclerLinear() {
+        PublicacionesAdapter adapter = new PublicacionesAdapter(UsuarioActivity.this, listaPublicaciones);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+        visualizacionPublicaciones = LINEAR;
+        ivVisualizacionPublicaciones.setImageResource(R.drawable.ic_grid);
+    }
+
+    private void montarRecyclerGrid() {
+        PublicacionesPerfilAdapter adapter = new PublicacionesPerfilAdapter(UsuarioActivity.this, listaPublicaciones);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(UsuarioActivity.this, 3);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+        visualizacionPublicaciones = GRID;
+        ivVisualizacionPublicaciones.setImageResource(R.drawable.ic_list);
     }
 
     @Override
@@ -226,4 +287,9 @@ public class UsuarioActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.bindData(); // Se llama a comprobarAmistad dentro de está función
+    }
 }

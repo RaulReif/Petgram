@@ -70,7 +70,7 @@ public class BloqueadosAdapter extends RecyclerView.Adapter<BloqueadosAdapter.Bl
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Desbloquear");
-                builder.setMessage("Estas seguro que deseas desbloquear a este usuario?");
+                builder.setMessage("Estás seguro que deseas desbloquear a este usuario?");
                 builder.setNegativeButton("Cancelar", null);
                 builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override

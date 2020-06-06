@@ -1,197 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="visible"
-    tools:context=".PerfilFragment">
 
-    <LinearLayout
-        android:id="@+id/scrollViewPerfil"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/refreshLayoutPerfil"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
-
+        android:visibility="visible"
+        tools:context=".PerfilFragment">
 
         <LinearLayout
+            android:id="@+id/scrollViewPerfil"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#00AC9E"
             android:orientation="vertical"
-            tools:context="com.demotxt.droidsrce.profileui.MainActivity">
+            android:visibility="visible">
 
-            <RelativeLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="405dp">
+                android:layout_height="match_parent"
+                android:background="#00AC9E"
+                android:orientation="vertical"
+                tools:context="com.demotxt.droidsrce.profileui.MainActivity">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
-                    android:background="@drawable/gradientbackground"
-                    android:orientation="vertical">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/imagenIvPerfil"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="20dp"
-                        android:src="@drawable/icono_petgram2"
-                        app:civ_border_color="#FFFFFF"
-                        app:civ_border_width="2dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.498"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintVertical_bias="0.007" />
-
-                    <TextView
-                        android:id="@+id/nombreTvPerfil"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginRight="10dp"
-                        android:textColor="#fff"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/menuIvPerfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="15sp"
-                    android:layout_marginRight="15sp"
-                    android:src="@drawable/ic_menu"
-                    tools:srcCompat="@drawable/ic_menu" android:clickable="true"
-                    />
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="400dp"
-                    android:layout_height="120dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="275dp"
-                    android:layout_marginRight="10dp">
+                    android:layout_height="405dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
+                        android:layout_height="350dp"
+                        android:background="@drawable/gradientbackground"
+                        android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imagenIvPerfil"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="20dp"
+                            android:src="@drawable/icono_petgram2"
+                            app:civ_border_color="#FFFFFF"
+                            app:civ_border_width="2dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.498"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintVertical_bias="0.007" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Publicaciones"
-                                android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/nombreTvPerfil"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:textColor="#fff"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/publicacionesTvPerfil"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingTop="10dp"
-                                android:textColor="#00A89B"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/amiglosLblEtPerfil"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Amigos"
-                                android:textSize="18sp" />
-
-                            <TextView
-                                android:id="@+id/amigosTvPerfil"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingTop="10dp"
-                                android:textColor="#00A89B"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/localidad"
-                                android:textSize="18sp" />
-
-                            <TextView
-                                android:id="@+id/localidadTvPerfil"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingTop="10dp"
-                                android:textColor="#00A89B"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
-            </RelativeLayout>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/menuIvPerfil"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="15sp"
+                        android:layout_marginRight="15sp"
+                        android:clickable="true"
+                        android:src="@drawable/ic_menu"
+                        tools:srcCompat="@drawable/ic_menu" />
 
-            <TextView
-                android:id="@+id/estadoTvPerfil"
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="400dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="275dp"
+                        android:layout_marginRight="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:weightSum="3">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Publicaciones"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/publicacionesTvPerfil"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="10dp"
+                                    android:textColor="#00A89B"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/amiglosLblEtPerfil"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Amigos"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/amigosTvPerfil"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="10dp"
+                                    android:textColor="#00A89B"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/localidad"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/localidadTvPerfil"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingTop="10dp"
+                                    android:textColor="#00A89B"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/estadoTvPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/editarPerfilBtnPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/buttonstyle"
+                    android:text="@string/editar_perfil"
+                    android:textColor="#fff"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/cambiarVisualizacionPublicacionesPerfil"
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:srcCompat="@drawable/ic_list"
+                    tools:ignore="VectorDrawableCompat" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/publicacionesRecyclerPerfil"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textColor="#ffffff"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/editarPerfilBtnPerfil"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/buttonstyle"
-                android:text="@string/editar_perfil"
-                android:textColor="#fff"
-                android:visibility="visible" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/publicacionesRecyclerPerfil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

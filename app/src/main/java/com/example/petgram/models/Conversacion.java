@@ -7,15 +7,13 @@ public class Conversacion implements Comparable<Conversacion> {
     private HashMap<String, Mensaje> mensajes;
     private boolean bloqueado;
     private int mensajesNoLeidos;
-    private String uid, nombreUsuario, fotoPerfil;
+    private String uid;
     private long ultimoMensaje;
 
-    public Conversacion(String uid, String nombreUsuario, String fotoPerfil) {
-        this.mensajesNoLeidos = 1;
+    public Conversacion(String uid) {
+        this.mensajesNoLeidos = 0;
         this.bloqueado = false;
         this.uid = uid;
-        this.nombreUsuario = nombreUsuario;
-        this.fotoPerfil = fotoPerfil;
     }
 
     public Conversacion(){}
@@ -66,22 +64,6 @@ public class Conversacion implements Comparable<Conversacion> {
 
     public void setUltimoMensaje(long ultimoMensaje) {
         this.ultimoMensaje = ultimoMensaje;
-    }
-
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getFotoPerfil() {
-        return fotoPerfil;
-    }
-
-    public void setFotoPerfil(String fotoPerfil) {
-        this.fotoPerfil = fotoPerfil;
     }
 
     @Override

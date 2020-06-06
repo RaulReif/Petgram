@@ -8,15 +8,14 @@ import java.util.HashMap;
 
 public class Publicacion implements Parcelable, Comparable<Publicacion> {
 
-    private String foto, pieFoto, uidUsuario, nombreUsuario, lugar, id;
+    private String foto, pieFoto, uidUsuario, lugar, id;
     private HashMap<String, Comentario> comentarios;
     private Long timestamp;
 
-    public Publicacion(String idUsuario, String foto, String pieFoto, String nombreUsuario, long timestamp, String lugar, String id) {
+    public Publicacion(String idUsuario, String foto, String pieFoto, long timestamp, String lugar, String id) {
         this.foto = foto;
         this.pieFoto = pieFoto;
         this.uidUsuario = idUsuario;
-        this.nombreUsuario = nombreUsuario;
         this.timestamp = timestamp;
         this.lugar = lugar;
         this.id = id;
@@ -30,17 +29,13 @@ public class Publicacion implements Parcelable, Comparable<Publicacion> {
         foto = in.readString();
         pieFoto = in.readString();
         uidUsuario = in.readString();
-        nombreUsuario = in.readString();
-        timestamp = in.readLong();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(foto);
-        dest.writeString(pieFoto);
-        dest.writeString(uidUsuario);
-        dest.writeString(nombreUsuario);
-        dest.writeLong(timestamp);
+        lugar = in.readString();
+        id = in.readString();
+        if (in.readByte() == 0) {
+            timestamp = null;
+        } else {
+            timestamp = in.readLong();
+        }
     }
 
     public static final Creator<Publicacion> CREATOR = new Creator<Publicacion>() {
@@ -79,14 +74,6 @@ public class Publicacion implements Parcelable, Comparable<Publicacion> {
         this.uidUsuario = uidUsuario;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
@@ -116,6 +103,21 @@ public class Publicacion implements Parcelable, Comparable<Publicacion> {
         return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(foto);
+        dest.writeString(pieFoto);
+        dest.writeString(uidUsuario);
+        dest.writeString(lugar);
+        dest.writeString(id);
+        if (timestamp == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(timestamp);
+        }
+    }
+
     public String getId() {
         return id;
     }
@@ -124,9 +126,14 @@ public class Publicacion implements Parcelable, Comparable<Publicacion> {
         this.id = uid;
     }
 
+    public void addComentario(Comentario comentario) {
+        final String key = String.valueOf(System.currentTimeMillis());
+        this.comentarios.put(key, comentario);
+    }
+
     @Override
     public int compareTo(Publicacion p) {
-        if( this.timestamp > p.getTimestamp() )
+        if (this.timestamp > p.getTimestamp())
             return -1;
         else
             return 1;

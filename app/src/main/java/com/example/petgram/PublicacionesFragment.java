@@ -7,15 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.adapters.PublicacionesAdapter;
 import com.example.petgram.models.Publicacion;
+import com.example.petgram.models.WrapContentLinearLayoutManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -35,6 +36,8 @@ public class PublicacionesFragment extends Fragment {
     private PublicacionesAdapter adapter;
     private ArrayList<Publicacion> publicaciones;
 
+    private SwipeRefreshLayout refreshLayuot;
+
     public PublicacionesFragment() {
         // Required empty public constructor
     }
@@ -46,9 +49,28 @@ public class PublicacionesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_publicaciones, container, false);
 
-        recycler = view.findViewById(R.id.publicacionesRecycler);
-        prepareRecycler();
+        findViews(view);
+        prepareRefreshLayout();
+
         return view;
+    }
+
+
+
+    private void findViews(View view) {
+        recycler = view.findViewById(R.id.publicacionesRecycler);
+        refreshLayuot = view.findViewById(R.id.refreshLayuotPublicaciones);
+    }
+
+    private void prepareRefreshLayout() {
+        refreshLayuot.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+                refreshLayuot.setRefreshing(false);
+            }
+        });
+        refreshLayuot.setColorSchemeResources(R.color.colorPrimary);
     }
 
     private void obtenerPublicaciones() {
@@ -65,9 +87,9 @@ public class PublicacionesFragment extends Fragment {
                 HashMap<String, String> hashMap = dataSnapshot.getValue(genericTypeIndicator);
 
                 if(hashMap != null) { // Si el hashMap es nulo significará que el usuario aún no tiene amigos
-                    ArrayList<String>uids =
-                            new ArrayList<>(dataSnapshot.getValue(genericTypeIndicator).values());
+                    final ArrayList<String> uids = new ArrayList<>(hashMap.values());
 
+                    final int[] contadorIteraciones = {0};
                     for (String uid : uids) {
                         Utils.getUserReference(uid).child("publicaciones")
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -86,8 +108,13 @@ public class PublicacionesFragment extends Fragment {
                                         for (Publicacion p : publicacionesAux)
                                             publicaciones.add(p);
 
-                                        Collections.sort(publicaciones);
-                                        adapter.notifyDataSetChanged();
+                                        contadorIteraciones[0]++;
+
+                                        // Solo notificamos los datos en la última iteración
+                                        if(uids.size() == contadorIteraciones[0]) {
+                                            Collections.sort(publicaciones);
+                                            adapter.notifyDataSetChanged();
+                                        }
 
                                     }
 
@@ -111,17 +138,17 @@ public class PublicacionesFragment extends Fragment {
     }
 
     private void prepareRecycler() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(),
-                RecyclerView.VERTICAL, false);
         publicaciones = new ArrayList<>();
         adapter = new PublicacionesAdapter(getContext(), publicaciones);
-        recycler.setLayoutManager(layoutManager);
+        recycler.setLayoutManager(new WrapContentLinearLayoutManager
+                (getContext(), LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        prepareRecycler();
         obtenerPublicaciones();
     }
 }

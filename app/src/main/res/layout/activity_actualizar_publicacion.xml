@@ -4,51 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10sp"
-    tools:context=".SubirPublicacionActivity">
+    tools:context=".ActualizarPublicacionActivity">
 
-    <ImageView
-        android:id="@+id/fotoIvSubirPublicacion"
-        android:layout_width="0dp"
-        android:layout_height="300sp"
-        app:layout_constraintBottom_toTopOf="@+id/subirBtnSubirPublicacion"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarActualizarPublicacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="#FFFFFF"
+        app:theme="@style/ToolbarTheme"/>
+
+    <ImageView
+        android:id="@+id/fotoIvActualizarPublicacion"
+        android:layout_width="0dp"
+        android:layout_height="300sp"
+        app:layout_constraintBottom_toTopOf="@+id/subirBtnActualizarPublicacion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarActualizarPublicacion"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_camera"
+        app:srcCompat="@drawable/ic_touch"
         tools:ignore="VectorDrawableCompat" />
 
     <EditText
-        android:id="@+id/pieFotoEtSubirPublicacion"
+        android:id="@+id/pieFotoEtActualizarPublicacion"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/pie_foto"
         android:inputType="textMultiLine"
-        app:layout_constraintBottom_toTopOf="@+id/subirBtnSubirPublicacion"
+        app:layout_constraintBottom_toTopOf="@+id/subirBtnActualizarPublicacion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lugarEtSubirPublicacion"
+        app:layout_constraintTop_toBottomOf="@+id/lugarEtActualizarPublicacion"
         app:layout_constraintVertical_bias="0.333" />
 
     <Button
-        android:id="@+id/subirBtnSubirPublicacion"
+        android:id="@+id/subirBtnActualizarPublicacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15sp"
         android:background="@drawable/boton_azul_claro"
-        android:text="@string/subir"
+        android:text="@string/modificar"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/lugarEtSubirPublicacion"
+        android:id="@+id/lugarEtActualizarPublicacion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_location"
@@ -56,10 +68,11 @@
         android:ems="10"
         android:hint="@string/lugar_foto"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/subirBtnSubirPublicacion"
+        app:layout_constraintBottom_toTopOf="@+id/subirBtnActualizarPublicacion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fotoIvSubirPublicacion"
+        app:layout_constraintTop_toBottomOf="@+id/fotoIvActualizarPublicacion"
         app:layout_constraintVertical_bias="0.032" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

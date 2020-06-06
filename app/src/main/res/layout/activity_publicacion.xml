@@ -6,49 +6,110 @@
     android:layout_height="match_parent"
     tools:context=".Publicacion">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/publicacionToolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollViewPublicacion"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/comentarioEtPublicacionActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/publicacionToolbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/ToolbarTheme"
+                app:titleTextColor="#FFFFFF" />
+
+            <ImageView
+                android:id="@+id/fotoIvPublicacion"
+                android:layout_width="0dp"
+                android:layout_height="330sp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/publicacionToolbar"
+                tools:src="@tools:sample/avatars[2]" />
+
+            <TextView
+                android:id="@+id/pieFotoTvPublicacion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10sp"
+                android:text="TextView"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.8"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fotoIvPublicacion" />
+
+            <TextView
+                android:id="@+id/fechaYLocalidadTvPublicacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="TextView"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.028"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pieFotoTvPublicacion" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerComentariosPublicacion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fechaYLocalidadTvPublicacion" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <EditText
+        android:id="@+id/comentarioEtPublicacionActivity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:ems="10"
+        android:hint="@string/escribe_comentario"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/enviarComentarioIvComentariosActivity"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/fotoIvPublicacion"
-        android:layout_width="0dp"
-        android:layout_height="330sp"
+        android:id="@+id/enviarComentarioIvComentariosActivity"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        android:layout_margin="8sp"
+        android:layout_marginBottom="8dp"
+        android:onClick="clickComentar"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/publicacionToolbar"
-        tools:src="@tools:sample/avatars[2]" />
+        app:layout_constraintStart_toEndOf="@+id/comentarioEtComentarios"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerComentarios"
+        app:srcCompat="@drawable/ic_send_grey"
+        android:animateLayoutChanges="true"
+        />
 
-    <TextView
-        android:id="@+id/pieFotoTvPublicacion"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10sp"
-        android:text="TextView"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fotoIvPublicacion" />
 
-    <TextView
-        android:id="@+id/fechaTvPublicacion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="TextView"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pieFotoTvPublicacion" />
 </androidx.constraintlayout.widget.ConstraintLayout>

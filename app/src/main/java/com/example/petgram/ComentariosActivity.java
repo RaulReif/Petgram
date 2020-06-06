@@ -21,6 +21,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class ComentariosActivity extends AppCompatActivity {
@@ -51,18 +52,19 @@ public class ComentariosActivity extends AppCompatActivity {
         // Obtenemos los comentarios de la publicacion
         Utils.getUserReference(uidUsuario).child("publicaciones").child(uidPublicacion)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                publicacion = dataSnapshot.getValue(Publicacion.class);
-                comentarios = new ArrayList<>(publicacion.getComentarios().values());
-                prepareRecycler();
-            }
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        publicacion = dataSnapshot.getValue(Publicacion.class);
+                        comentarios = new ArrayList<>(publicacion.getComentarios().values());
+                        Collections.sort(comentarios);
+                        prepareRecycler();
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
     }
 
     private void findViews() {
@@ -100,25 +102,15 @@ public class ComentariosActivity extends AppCompatActivity {
     public void clickComentar(View view) {
         final String mensaje = etComentario.getText().toString().trim();
         if (!mensaje.isEmpty()) {
-            Utils.getMyReference().child("nombre").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String miUid = FirebaseAuth.getInstance().getUid();
-                    Comentario comentario = new Comentario( mensaje, dataSnapshot.getValue(String.class),
-                            miUid, publicacion.getId(), publicacion.getUidUsuario());
+            String miUid = FirebaseAuth.getInstance().getUid();
+            Comentario comentario = new Comentario(mensaje, miUid, publicacion.getId(), publicacion.getUidUsuario());
 
-                    Utils.getUserReference(uidUsuario).child("publicaciones")
-                            .child(uidPublicacion).child("comentarios").push().setValue(comentario);
+            Utils.getUserReference(uidUsuario).child("publicaciones")
+                    .child(uidPublicacion).child("comentarios").push().setValue(comentario);
 
-                    comentarios.add(comentario);
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            comentarios.add(comentario);
+            Collections.sort(comentarios);
+            adapter.notifyDataSetChanged();
             etComentario.setText("");
         }
     }

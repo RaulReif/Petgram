@@ -1,24 +1,45 @@
 package com.example.petgram.models;
 
-public class Comentario {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private String contenido,  nombreUsuario, uidUsuarioDelComentario, uidPublicacion, uidUsuarioPublicacion;
+public class Comentario implements Parcelable, Comparable<Comentario> {
+
+    private String contenido,  uidUsuarioDelComentario, uidPublicacion, uidUsuarioPublicacion;
 
     private long timestamp;
 
-    public Comentario( String contenido, String nombreUsuario, String uidUsuario,
-                       String uidPublicacion, String uidUsuarioPublicacion) {
+    public Comentario( String contenido, String uidUsuario, String uidPublicacion,
+                       String uidUsuarioPublicacion) {
         this.contenido = contenido;
         this.uidUsuarioDelComentario = uidUsuario;
         this.uidPublicacion = uidPublicacion;
         this.uidUsuarioPublicacion = uidUsuarioPublicacion;
-        this.nombreUsuario = nombreUsuario;
         this.timestamp = System.currentTimeMillis();
     }
 
     public Comentario() {}
 
 
+    protected Comentario(Parcel in) {
+        contenido = in.readString();
+        uidUsuarioDelComentario = in.readString();
+        uidPublicacion = in.readString();
+        uidUsuarioPublicacion = in.readString();
+        timestamp = in.readLong();
+    }
+
+    public static final Creator<Comentario> CREATOR = new Creator<Comentario>() {
+        @Override
+        public Comentario createFromParcel(Parcel in) {
+            return new Comentario(in);
+        }
+
+        @Override
+        public Comentario[] newArray(int size) {
+            return new Comentario[size];
+        }
+    };
 
     public String getContenido() {
         return contenido;
@@ -60,11 +81,26 @@ public class Comentario {
         this.timestamp = timestamp;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(contenido);
+        dest.writeString(uidUsuarioDelComentario);
+        dest.writeString(uidPublicacion);
+        dest.writeString(uidUsuarioPublicacion);
+        dest.writeLong(timestamp);
+    }
+
+    @Override
+    public int compareTo(Comentario c) {
+        if(this.timestamp > c.timestamp) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 }

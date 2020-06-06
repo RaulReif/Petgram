@@ -357,23 +357,14 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void crearConversaciones(final String mensaje) {
-        Utils.getMyReference().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Usuario usuarioAux = dataSnapshot.getValue(Usuario.class);
-                conversacionOtroUsuario.setValue(new Conversacion(uidUsuario,
-                        usuarioAux.getNombre(), usuarioAux.getImagen()));
-                conversacionUsuario.setValue(new Conversacion(uidOtroUsuario, usuario.getNombre(), usuario.getImagen()));
+
+                conversacionOtroUsuario.setValue(new Conversacion(uidUsuario));
+                conversacionUsuario.setValue(new Conversacion(uidOtroUsuario));
 
                 enviarMensaje(mensaje);
                 existeConversacion = true;
                 listeners();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
     }
 
     private void enviarMensaje(String contenidoMensaje) {
@@ -422,10 +413,10 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.denunciarMenuChat: {
+            /*case R.id.denunciarMenuChat: {
                 Toast.makeText(this, "Se desea denunciar al usuario", Toast.LENGTH_SHORT).show();
                 break;
-            }
+            }*/
             case R.id.bloquearMenuChat: {
                 this.conversacionUsuario.child("bloqueado")
                         .addListenerForSingleValueEvent(new ValueEventListener() {

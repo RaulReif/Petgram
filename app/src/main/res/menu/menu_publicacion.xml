@@ -9,17 +9,17 @@
 
         <menu>
             <item
-                android:id="@+id/bloquearMenuChat"
+                android:id="@+id/eliminarMenuPublicacion"
                 android:icon="@drawable/ic_block"
-                android:title="Bloquear" />
+                android:title="Eliminar" />
 
-           <!-- <item
-                android:id="@+id/denunciarMenuChat"
-                android:title="Denunciar" /> -->
+            <item
+                android:id="@+id/editarMenuPublicacion"
+                android:icon="@drawable/ic_edit"
+                android:title="Modificar" />
         </menu>
 
 
     </item>
-
 
 </menu>

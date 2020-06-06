@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardFilaConversacion"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -73,6 +74,22 @@
             app:layout_constraintStart_toEndOf="@+id/imagenIvFilaConversacion"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.771" />
+
+        <TextView
+            android:id="@+id/tvMensajesNoLeidos"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:background="@drawable/red_point"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.813"
+            app:layout_constraintStart_toEndOf="@+id/ultimoMensajeTvFilaConversacion"
+            app:layout_constraintTop_toBottomOf="@+id/fechaTvFilaConversacion"
+            app:layout_constraintVertical_bias="0.492" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

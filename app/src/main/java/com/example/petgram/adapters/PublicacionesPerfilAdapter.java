@@ -3,6 +3,7 @@ package com.example.petgram.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +37,17 @@ public class PublicacionesPerfilAdapter extends RecyclerView.Adapter<Publicacion
 
     @Override
     public void onBindViewHolder(@NonNull PublicacionPerfilHolder holder, final int position) {
-        Picasso.get().load(lista.get(position).getFoto()).into(holder.imagen);
+        final Publicacion publicacion = lista.get(position);
+        Picasso.get().load(publicacion.getFoto()).into(holder.imagen);
 
         holder.imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("publicacion", lista.get(position));
+                bundle.putParcelable("publicacion", publicacion);
+                if(publicacion.getComentarios() != null)
+                bundle.putParcelableArrayList("comentarios",
+                        new ArrayList<Parcelable>(publicacion.getComentarios().values()));
                 Intent intent = new Intent(context, PublicacionActivity.class);
                 intent.putExtras(bundle);
                 context.startActivity(intent);

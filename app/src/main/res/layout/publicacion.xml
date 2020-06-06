@@ -19,8 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="3sp"
-            android:visibility="visible">
+            android:padding="3sp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -83,7 +82,7 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/fechaTvPublicacion"
+                android:id="@+id/fechaYLocalidadTvPublicacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3sp"
@@ -94,38 +93,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="3sp"
-                android:layout_marginRight="3sp"
-                android:orientation="horizontal"
-                android:paddingTop="10sp">
-
-                <TextView
-                    android:id="@+id/nombreSegundoComentarioTvPublicacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5sp"
-                    android:maxLines="1"
-                    android:text="raul_reif"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/segundoComentarioTvPublicacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5sp"
-                    android:layout_weight="20"
-                    android:maxLines="1"
-                    android:paddingLeft="5sp"
-                    android:singleLine="true"
-                    android:text="Este es un comentario de prueba"
-                    android:visibility="visible" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="3sp"
                 android:layout_marginTop="10sp"
                 android:layout_marginRight="3sp"
@@ -138,19 +106,44 @@
                     android:layout_marginLeft="5sp"
                     android:maxLines="1"
                     android:text="raul_reif"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/primerComentarioTvPublicacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="5sp"
-                    android:layout_weight="20"
                     android:maxLines="1"
                     android:paddingLeft="5sp"
                     android:singleLine="true"
-                    android:text="Este es un comentario de prueba"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginRight="3sp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/nombreSegundoComentarioTvPublicacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5sp"
+                    android:maxLines="1"
+                    android:text="raul_reif"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/segundoComentarioTvPublicacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5sp"
+                    android:maxLines="1"
+                    android:paddingLeft="5sp"
+                    android:singleLine="true"
                     android:visibility="visible" />
             </LinearLayout>
 

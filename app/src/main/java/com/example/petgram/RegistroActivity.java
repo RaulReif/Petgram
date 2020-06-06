@@ -92,7 +92,7 @@ public class RegistroActivity extends AppCompatActivity {
                             if (contrasena.length() >= 6) {
                                 comprobarCorreo(email, contrasena);
                             } else {
-                                etContrasena.setError("La contraseña debe contener al menos 6 caracteres");
+                                etContrasena.setError("La contraseña debe contener al menos 6 dígitos");
                             }
                         } else {
                             etEmail.setError("El formato del email no es correcto");

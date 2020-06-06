@@ -84,9 +84,9 @@ public class CambiarContrasenaActivity extends AppCompatActivity {
         // Comprobamos que tenga más de 7 digitos
         boolean digitosMinimos = true;
 
-        if(contrasena.length() < 8){
+        if(contrasena.length() < 6){
             digitosMinimos = false;
-            etContrasena.setError("La contaseña debe contener al menos 8 digitos");
+            etContrasena.setError("La contaseña debe contener al menos 6 dígitos");
         }
 
         // Solo entrará en el siguiente if si todos los campos han sido verificados correctamente

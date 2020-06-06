@@ -8,19 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.PopupMenu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.petgram.Configuracion.Utils;
+import com.example.petgram.adapters.PublicacionesAdapter;
 import com.example.petgram.adapters.PublicacionesPerfilAdapter;
 import com.example.petgram.models.Publicacion;
 import com.example.petgram.models.Usuario;
@@ -31,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,6 +49,14 @@ public class PerfilFragment extends Fragment {
     private CircleImageView ivPerfil, ivMenu;
     private RecyclerView recycler;
     private Button btnEditarPerfil;
+    private ImageView ivVisualizacionPublicaciones;
+    private SwipeRefreshLayout refreshLayuot;
+
+    private String visualizacionPublicaciones;
+    private final String LINEAR = "LinearLayout";
+    private final String GRID = "GridLayout";
+
+
 
 
     public PerfilFragment() {
@@ -63,19 +72,13 @@ public class PerfilFragment extends Fragment {
 
         findViews(view);
 
-        bindData(); // Aosiciamos los datos de nustro usuario a las vistas
-
         prepareClickListeners();
 
+        prepareRefreshLayout();
+
+        visualizacionPublicaciones = GRID;
+
         return view;
-    }
-
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        this.bindData();
     }
 
     private void findViews(View view) {
@@ -89,6 +92,19 @@ public class PerfilFragment extends Fragment {
         this.ivMenu = view.findViewById(R.id.menuIvPerfil);
         this.recycler = view.findViewById(R.id.publicacionesRecyclerPerfil);
         this.btnEditarPerfil = view.findViewById(R.id.editarPerfilBtnPerfil);
+        this.ivVisualizacionPublicaciones = view.findViewById(R.id.cambiarVisualizacionPublicacionesPerfil);
+        this.refreshLayuot = view.findViewById(R.id.refreshLayoutPerfil);
+    }
+
+    private void prepareRefreshLayout() {
+        refreshLayuot.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+                refreshLayuot.setRefreshing(false);
+            }
+        });
+        refreshLayuot.setColorSchemeResources(R.color.colorPrimary);
     }
 
     private void bindData() {
@@ -114,11 +130,11 @@ public class PerfilFragment extends Fragment {
 
 
                 // Montamos nuestro recycler
-                PublicacionesPerfilAdapter adapter = new PublicacionesPerfilAdapter(getContext(), lista);
-                RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-                recycler.setAdapter(adapter);
-                recycler.setLayoutManager(layoutManager);
-                recycler.setHasFixedSize(true);
+                if(visualizacionPublicaciones.equals(GRID)) {
+                    montarRecyclerGrid();
+                } else {
+                    montarRecyclerLinear();
+                }
 
             }
 
@@ -131,10 +147,12 @@ public class PerfilFragment extends Fragment {
     }
 
     private void obtenerListaPublicaciones(Usuario u) {
-        if (u.getPublicaciones() != null)
+        if (u.getPublicaciones() != null) {
             lista = new ArrayList<>(u.getPublicaciones().values());
-        else
+            Collections.sort(lista);
+        } else {
             lista = new ArrayList<>();
+        }
     }
 
     private void prepareClickListeners() {
@@ -162,7 +180,12 @@ public class PerfilFragment extends Fragment {
                 startActivity(new Intent(getContext(), MenuActivity.class));
             }
         });
-
+        this.ivVisualizacionPublicaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cambiarVisualizacionPublicaciones();
+            }
+        });
     }
 
     private int obtenerNumeroAmigos(Usuario u) {
@@ -171,6 +194,34 @@ public class PerfilFragment extends Fragment {
         } else {
             return 0;
         }
+    }
+
+    public void cambiarVisualizacionPublicaciones() {
+        if(visualizacionPublicaciones.equals(GRID)) {
+            montarRecyclerLinear();
+        } else {
+            montarRecyclerGrid();
+        }
+    }
+
+    private void montarRecyclerLinear() {
+        PublicacionesAdapter adapter = new PublicacionesAdapter(getContext(), lista);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+        visualizacionPublicaciones = LINEAR;
+        ivVisualizacionPublicaciones.setImageResource(R.drawable.ic_grid);
+    }
+
+    private void montarRecyclerGrid() {
+        PublicacionesPerfilAdapter adapter = new PublicacionesPerfilAdapter(getContext(), lista);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+        visualizacionPublicaciones = GRID;
+        ivVisualizacionPublicaciones.setImageResource(R.drawable.ic_list);
     }
 
     @Override
@@ -187,5 +238,10 @@ public class PerfilFragment extends Fragment {
         startActivity(intent);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.bindData();
+    }
 
 }

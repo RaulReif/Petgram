@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.example.petgram.Configuracion.Utils;
 import com.example.petgram.adapters.ConversacionesAdapter;
 import com.example.petgram.models.Conversacion;
-import com.example.petgram.models.Usuario;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -69,6 +68,7 @@ public class MensajesFragment extends Fragment {
     private void prepareRecycler() {
         lista = new ArrayList<>();
         listaMostrada = new ArrayList<>();
+
         // Montamos nuestro Adapter y LayoutManager y lo asociamos al RecyclerView
         adapter = new ConversacionesAdapter(getContext(), listaMostrada);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -126,11 +126,27 @@ public class MensajesFragment extends Fragment {
                 if (!cadena.isEmpty()) {
                     listaMostrada.clear();
                     for (int i = 0; i < lista.size(); i++) {
-                        if (lista.get(i).getNombreUsuario().contains(cadena)) {
-                            listaMostrada.add(lista.get(i));
-                        }
+                        final int finalI = i;
+                        Utils.getUserReference(lista.get(i).getUid()).child("nombre")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        final String nombre = dataSnapshot.getValue(String.class);
+
+                                        if(nombre.contains(cadena)) { // Comprobamos que contenga la cadena
+                                            if(!listaMostrada.contains(lista.get(finalI))) { // Comprobamos que la conversación no este insertada
+                                                listaMostrada.add(lista.get(finalI));
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                     }
-                    adapter.notifyDataSetChanged();
                 } else {
                     listaMostrada.clear();
                     listaMostrada.addAll(lista);

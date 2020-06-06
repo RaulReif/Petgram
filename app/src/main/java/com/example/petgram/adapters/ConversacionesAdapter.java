@@ -19,6 +19,9 @@ import com.example.petgram.R;
 import com.example.petgram.models.Conversacion;
 import com.example.petgram.models.Mensaje;
 import com.example.petgram.models.Usuario;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ConversacionHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ConversacionHolder holder, int position) {
 
             final Conversacion conversacion = lista.get(position);
 
@@ -62,10 +65,30 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
             String fecha = Utils.getStringFecha(mensaje.getTimestamp());
 
             // Asociamos los datos
-            holder.nombre.setText(conversacion.getNombreUsuario());
+
             holder.fecha.setText(fecha);
             holder.ultimoMensaje.setText(mensajeString);
-            Picasso.get().load(conversacion.getFotoPerfil()).into(holder.fotoPerfil);
+
+            Utils.getUserReference(conversacion.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Usuario usuario = dataSnapshot.getValue(Usuario.class);
+                    holder.nombre.setText(usuario.getNombre());
+                    Picasso.get().load(usuario.getImagen()).into(holder.fotoPerfil);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            if(conversacion.getMensajesNoLeidos() == 0) {
+                holder.tvMensajesNoLeidos.setVisibility(View.GONE);
+            } else {
+                holder.tvMensajesNoLeidos.setText(String.valueOf(conversacion.getMensajesNoLeidos()));
+                holder.tvMensajesNoLeidos.setVisibility(View.VISIBLE);
+            }
 
             // Damos el evento de ir al chat
             holder.card.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +129,7 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
 
         private CardView card;
         private CircleImageView fotoPerfil;
-        private TextView nombre, fecha, ultimoMensaje;
+        private TextView nombre, fecha, ultimoMensaje, tvMensajesNoLeidos;
 
         public ConversacionHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,6 +138,7 @@ public class ConversacionesAdapter extends RecyclerView.Adapter<ConversacionesAd
             this.fecha = itemView.findViewById(R.id.fechaTvFilaConversacion);
             this.card = itemView.findViewById(R.id.cardFilaConversacion);
             this.ultimoMensaje = itemView.findViewById(R.id.ultimoMensajeTvFilaConversacion);
+            this.tvMensajesNoLeidos = itemView.findViewById(R.id.tvMensajesNoLeidos);
         }
     }
 }

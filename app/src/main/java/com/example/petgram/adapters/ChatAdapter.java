@@ -44,7 +44,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MensajeHolder>
         this.listaMensajes = listaMensajes;
 
         // Obtenemos el UID del usuario
-        this.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.uid = FirebaseAuth.getInstance().getUid();
     }
 
 

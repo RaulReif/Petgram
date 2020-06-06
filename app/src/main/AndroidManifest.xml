@@ -13,7 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MenuActivity"></activity>
+
+        <activity
+            android:name=".ActualizarPublicacionActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".MenuActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ComentariosActivity"
             android:screenOrientation="portrait" />
@@ -40,7 +46,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".TableroActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".Registro2Activity"
             android:screenOrientation="portrait" />
